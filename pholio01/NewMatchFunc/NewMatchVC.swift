@@ -8,11 +8,16 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 import Pastel
 import UserNotifications
 import Kingfisher
 
 class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDataSource, UITableViewDelegate {
+    
+    
+    
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return matchedUsers.count
         
@@ -25,9 +30,18 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
         
         let matchedUser = matchedUsers[indexPath.row]
         
+        
+        
+        
+        
+        
+
+        
         let imageUrl = URL(string: matchedUser.profileImageUrl!)!
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(with: imageUrl)
+        
+        
         
         /*
          DispatchQueue.global(qos: .background).async {
@@ -60,7 +74,23 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
             
             let user = self.matchedUsers[indexPath.row]
             
-            self.showChatControllerForUser(user)        }
+            
+            self.showChatControllerForUser(user)
+            
+            
+        }
+        
+        let up = UIAlertAction(title: "User Profile", style: .default) { action in
+            
+            print("Segue to Chat Completed")
+            
+            let user = self.matchedUsers[indexPath.row]
+            
+            
+            self.showChatControllerForUser(user)
+            
+            
+        }
         
         let night = UIAlertAction(title: "User Gallery", style: .default) { action in
             
@@ -87,6 +117,7 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
                 
             }        }
         
+        actionSheet.addAction(up)
         actionSheet.addAction(day)
         actionSheet.addAction(night)
         actionSheet.addAction(cancel)
@@ -142,6 +173,9 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
     
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer){
         if gestureRecognizer.state == .ended {
+            
+            
+            
             let touchPoint = gestureRecognizer.location(in: self.matchTable)
             if let indexPath = matchTable.indexPathForRow(at: touchPoint) {
                 
@@ -238,9 +272,16 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
     
     @IBOutlet weak var matchTable: UITableView!
     
+    
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Sets the status bar to hidden when the view has finished appearing
+//        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+//        statusBar.isHidden = true
+//        
         Auth.auth().addStateDidChangeListener { (auth, user) in
             
             if Auth.auth().currentUser?.uid != nil {
@@ -271,11 +312,19 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
         // addGesture()
         
         let label = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 21))
-        label.center = CGPoint(x: 117, y: 247)
+        label.center = CGPoint(x: 115, y: 80)
         label.font = UIFont.boldSystemFont(ofSize: 18)
         label.text = "New Matches"
         label.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
         self.view.addSubview(label)
+        
+        
+        let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
+        labeltwo.center = CGPoint(x: 115, y: 277)
+        labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
+        labeltwo.text = "Messages"
+        labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+        self.view.addSubview(labeltwo)
 
         setupLongPressGesture()
         
@@ -329,6 +378,7 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
     }
     
     internal func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
         
         guard let userID = Auth.auth().currentUser?.uid else {
             return
@@ -520,6 +570,7 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
             
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 
+                
                 self.currentUser.userId = snapshot.key
                 
                 
@@ -531,6 +582,7 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
     }
     
     func fetchUserTwo() {
+        
         Database.database().reference().child("Users").child((Auth.auth().currentUser?.uid)!).child("Matched-Users").observe(.childAdded, with: { (snapshot) in
             
             if let dictionary = snapshot.value as? [String: AnyObject] {

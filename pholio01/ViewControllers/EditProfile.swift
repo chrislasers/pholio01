@@ -23,7 +23,7 @@ import MapKit
 import CoreLocation
 import GeoFire
 import Pastel
-import BSGridCollectionViewLayout
+
 
 class EditProfile:UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, ValidationDelegate {
     func validationSuccessful() {
@@ -340,16 +340,6 @@ class EditProfile:UIViewController, UITextFieldDelegate, CLLocationManagerDelega
         
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     func locationAuthStatus() {
         
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
@@ -441,7 +431,7 @@ class EditProfile:UIViewController, UITextFieldDelegate, CLLocationManagerDelega
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        HourlyRate.becomeFirstResponder
+        HourlyRate.becomeFirstResponder()
         
         
         

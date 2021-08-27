@@ -18,7 +18,7 @@ class MatchView: UIView {
     
     fileprivate let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "You and X have liked\neach other"
+        label.text = "You and Jessica Mills have liked\neach other"
         label.textAlignment = .center
         label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 20)
@@ -27,7 +27,7 @@ class MatchView: UIView {
     }()
     
     fileprivate let currentUserImageView: UIImageView = {
-        let imageView = UIImageView(image: #imageLiteral(resourceName: "kelly1"))
+        let imageView = UIImageView(image: #imageLiteral(resourceName: "backpack-camera-camera-lens-1214566"))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.borderWidth = 2
@@ -36,7 +36,7 @@ class MatchView: UIView {
     }()
     
     fileprivate let cardUserImageView: UIImageView = {
-        let imageView = UIImageView(image: #imageLiteral(resourceName: "jane2"))
+        let imageView = UIImageView(image: #imageLiteral(resourceName: "ann"))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.borderWidth = 2

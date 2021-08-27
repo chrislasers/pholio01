@@ -23,10 +23,18 @@ import Photos
 import FirebaseFirestore
 import Pastel
 import InstagramLogin
+import AuthenticationServices
+import CryptoKit
+
 
 
 
 class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
+    
+    
+    
+    
+    
     func validationSuccessful() {
         
     
@@ -158,6 +166,8 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
             }
         }
         
+        setupSignInButton()
+        
         
         var signInWithFbButton: UIButton {
             
@@ -197,8 +207,8 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
             
             return myLoginButton
         }
-        // Add the button to the view
-        view.addSubview(signInWithFbButton)
+        // Add the FACEBOOK button to the view
+        //view.addSubview(signInWithFbButton)
         
         
         let tf = CustomTextField(padding: 24, height: 44)
@@ -307,16 +317,15 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         
        
         
-        email.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingChanged)
         
-        password.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingChanged)
      
         
-       
+       email.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingChanged)
         email.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidBegin)
         email.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEnd)
         email.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEndOnExit )
         
+        password.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingChanged)
         password.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidBegin)
         password.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEnd)
         password.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEndOnExit )
@@ -351,8 +360,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        email.becomeFirstResponder
-        
+        email.becomeFirstResponder()
         
         
         NotificationCenter.default.addObserver(self, selector:#selector(keyboardWillChange), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -404,130 +412,235 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         (segue as! OHCircleSegue).circleOrigin = touch.location(in: view)
     }
     
+    func setupSignInButton() {
+        
+        let signInButton = ASAuthorizationAppleIDButton()
+        signInButton.addTarget(self, action: #selector(handleSignWithAppleTapped), for: .touchUpInside)
+       
+        signInButton.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(signInButton)
+        
+        
+        NSLayoutConstraint.activate([
+            signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -300),
+                   signInButton.heightAnchor.constraint(equalToConstant: 45),
+                   signInButton.widthAnchor.constraint(equalToConstant: 250)
+               ])
+    }
     
+    @objc func handleSignWithAppleTapped() {
+        
+        
+        performSignIn()
+    }
+  
+    func performSignIn() {
+        
+        let request = createAppleIDRequest()
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+        
+    }
+    
+    func createAppleIDRequest() -> ASAuthorizationAppleIDRequest {
+        
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        
+        let nonce = randomNonceString()
+        request.nonce = sha256(nonce)
+        currentNonce = nonce
+        
+        return request
+    }
+    
+    
+    // Unhashed nonce.
+    fileprivate var currentNonce: String?
+
+    @available(iOS 13, *)
+    func startSignInWithAppleFlow() {
+      let nonce = randomNonceString()
+      currentNonce = nonce
+      let appleIDProvider = ASAuthorizationAppleIDProvider()
+      let request = appleIDProvider.createRequest()
+      request.requestedScopes = [.fullName, .email]
+      request.nonce = sha256(nonce)
+    }
+
+    @available(iOS 13, *)
+    private func sha256(_ input: String) -> String {
+      let inputData = Data(input.utf8)
+      let hashedData = SHA256.hash(data: inputData)
+      let hashString = hashedData.compactMap {
+        return String(format: "%02x", $0)
+      }.joined()
+
+      return hashString
+    }
+    
+    // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
+    private func randomNonceString(length: Int = 32) -> String {
+      precondition(length > 0)
+      let charset: Array<Character> =
+          Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+      var result = ""
+      var remainingLength = length
+
+      while remainingLength > 0 {
+        let randoms: [UInt8] = (0 ..< 16).map { _ in
+          var random: UInt8 = 0
+          let errorCode = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
+          if errorCode != errSecSuccess {
+            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+          }
+          return random
+        }
+
+        randoms.forEach { random in
+          if remainingLength == 0 {
+            return
+          }
+
+          if random < charset.count {
+            result.append(charset[Int(random)])
+            remainingLength -= 1
+          }
+        }
+      }
+
+      return result
+    }
+
+    
+    //FACEBOOK INTEGRATION
+   
     @objc func fbButtonPressed() {
         
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let signinvc = storyboard.instantiateViewController(withIdentifier: "signinvc")
-        
-        self.present(signinvc, animated: true, completion: nil)
+                      //let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                   // let signinvc = storyboard.instantiateViewController(withIdentifier: "UpdateVC")
+                    //self.present(signinvc, animated: true, completion: nil)
+
         
         print("Bar Button Pressed")
     }
     
     
-    //FACEBOOK INTEGRATION
-    
     @objc func loginButtonClicked() {
-        
-        hud.textLabel.text =  "Logging in with Facebook..."
-        hud.show(in: view, animated: true)
-        
-        let loginManager = LoginManager()
-        
-        
-        
-         //   loginManager.loginBehavior = .web
-        
-        
-        if let currentAccessToken = FBSDKAccessToken.current(), currentAccessToken.appID != FBSDKSettings.appID()
-        {
-            loginManager.logOut()
-        }
-        
-        loginManager.logIn(readPermissions:
-        [ .publicProfile, .email], viewController: self) { (result) in
-            switch result {
-            case .success(grantedPermissions: _, declinedPermissions: _, token: _):
-                
-                
-                print("Successfully logged into Facebook")
-                
-                
-                self.performSegue(withIdentifier: "toEditProfile", sender: nil)
-                
-                
-                
-                self.signIntoFirebase()
-                
-            case .failed(let error):
-                Service.dismissHud(self.hud, text: "Error", detailText: "Canceled getting Facebook user: \(error)", delay: 2)
-            case .cancelled:
-                Service.dismissHud(self.hud, text: "Error", detailText: "Canceled getting Facebook user", delay: 2)
-                break
-            }
-        }
+           
+           hud.textLabel.text =  "Logging in with Facebook..."
+           hud.show(in: view, animated: true)
+           
+           _ = LoginManager()
+           
+
+           
+           let loginManager = LoginManager()
+                  loginManager.logIn(permissions: ["public_profile", "email"], from: self) { (result, error) in
+                      if let error = error {
+                          print("Failed to login: \(error.localizedDescription)")
+                          return
+                      }
+                      
+                      guard let accessToken = AccessToken.current else {
+                          print("Failed to get access token")
+                          return
+                      }
+           
+                      let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.tokenString)
+                      
+                      // Perform login by calling Firebase APIs
+                      Auth.auth().signIn(with: credential, completion: { (user, error) in
+                        
+                        let id = Auth.auth().currentUser?.uid
+                        let ref = Database.database().reference(withPath: "Users")
+
+                        ref.child(id!).observeSingleEvent(of: .value, with: {(snapshot) in
+                            if snapshot.exists() {
+                                
+                                
+                                print("Login error: \(String(describing: error?.localizedDescription))")
+                                let alertController = UIAlertController(title: "Login Error", message: error?.localizedDescription, preferredStyle: .alert)
+                                let okayAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                                alertController.addAction(okayAction)
+                                self.present(alertController, animated: true, completion: nil)
+                                
+                                
+                            } else {
+                                
+                                
+                                //User is signing UP
+                                
+                                self.getFacebookData()
+                                self.performSegue(withIdentifier: "toEditProfile", sender: nil)
+                                print("Successfully logged into Firebase")
+                                self.hud.dismiss(animated: true)
+                                
+                                    print(" Successful Login")
+                            }
+                        
+
+                      
+                      })
+           
+                  })
+               }
     }
     
-    fileprivate func signIntoFirebase() {
-        
-        guard let authenticationToken = AccessToken.current?.authenticationToken else {return}
-        
-        let credential = FacebookAuthProvider.credential(withAccessToken: authenticationToken)
-        
-        Auth.auth().signInAndRetrieveData(with: credential) { (authResult, error) in
-            if let error = error {
-                Service.dismissHud(self.hud, text: "Sign Up Error", detailText: error.localizedDescription, delay: 2)
-                return
-            }
-            
-            self.getFacebookData()
-            
+    
+      private func getFacebookData() {
+          
+    
+          let params: [String:String] = ["fields": "email, id"]
+          let graphRequest: GraphRequest = GraphRequest(graphPath: "me", parameters: params)
+          graphRequest.start { (connection: GraphRequestConnection?, result: Any?, error: Error?) in
+              
+              if error == nil {
+                  if let facebookData = result as? NSDictionary {
+                      if let publicProfile = facebookData.value(forKey: FacebookPermission.PublicProfile) as? NSDictionary {
+                          print("fb public profile: \(publicProfile)")
+                      }
+                      
+                      if let email = facebookData.value(forKey: FacebookPermission.Email) as? String {
+                          
+                          var userInfo = [String: AnyObject]()
+                          userInfo = ["email": email as AnyObject]
+                          self.CURRENT_USER_REF.setValue(userInfo)
+                          print("fb email: \(email)")
+                      }
+                      
+                      if let userPhotos = facebookData.value(forKey: FacebookPermission.UserPhotos) as? NSDictionary {
+                          print("fb photos: \(userPhotos)")
+                      }
+                  }
+                  
+                  
+                  if let values: [String:AnyObject] = result as? [String : AnyObject] {
+                  
+                  // update our databse by using the child database reference above called usersReference
+                      
 
-            
-            self.performSegue(withIdentifier: "toEditProfile", sender: nil)
-            print("Successfully logged into Firebase")
-            self.hud.dismiss(animated: true)
-            
-        }
-    }
-
-    private func getFacebookData() {
-        
-  
-        let params: [String:String] = ["fields": "email, id"]
-        let graphRequest: FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me", parameters: params)
-        graphRequest.start { (connection: FBSDKGraphRequestConnection?, result: Any?, error: Error?) in
-            
-            if error == nil {
-                if let facebookData = result as? NSDictionary {
-                    if let publicProfile = facebookData.value(forKey: FacebookPermission.PublicProfile) as? NSDictionary {
-                        print("fb public profile: \(publicProfile)")
-                    }
-                    
-                    if let email = facebookData.value(forKey: FacebookPermission.Email) as? String {
-                        
-                        var userInfo = [String: AnyObject]()
-                        userInfo = ["email": email as AnyObject]
-                        self.CURRENT_USER_REF.setValue(userInfo)
-                        print("fb email: \(email)")
-                    }
-                    
-                    if let userPhotos = facebookData.value(forKey: FacebookPermission.UserPhotos) as? NSDictionary {
-                        print("fb photos: \(userPhotos)")
-                    }
-                }
-                
-                
-                if let values: [String:AnyObject] = result as? [String : AnyObject] {
-                
-                // update our databse by using the child database reference above called usersReference
-                    
-
-                    self.CURRENT_USER_REF.setValue(values, withCompletionBlock: { (err, ref) in
-                    // if there's an error in saving to our firebase database
-                    if err != nil {
-                        print(err!)
-                        return
-                    }
-                    // no error, so it means we've saved the user into our firebase database successfully
-                    print("Save the user successfully into Firebase database")
-                })
-            }
-            }
-        }
-        
-    }
+                      self.CURRENT_USER_REF.setValue(values, withCompletionBlock: { (err, ref) in
+                      // if there's an error in saving to our firebase database
+                      if err != nil {
+                          print(err!)
+                          return
+                      }
+                      // no error, so it means we've saved the user into our firebase database successfully
+                      print("Save the user successfully into Firebase database")
+                  })
+              }
+              }
+          }
+          
+      }
+    
+    
+                  
    
     
     
@@ -682,10 +795,13 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     
     @IBAction func cancelPressed(_ sender: Any) {
+        
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let signinvc = storyboard.instantiateViewController(withIdentifier: "signinvc")
         
-        self.present(signinvc, animated: true, completion: nil)    }
+        self.present(signinvc, animated: true, completion: nil)
+        
+    }
     
     func signUpButton(enabled:Bool) {
         
@@ -702,7 +818,10 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     }
    
 
-   
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion:nil)
@@ -726,12 +845,39 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         
         print("FCM Token: \(Token)")
         
-       
+        ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("fcmToken").child(Messaging.messaging().fcmToken!).setValue(Token)
+
         ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("fcmToken").child(Messaging.messaging().fcmToken!).updateChildValues(Token)
+        
+
         
        // self.ref.child("Users").child(self.userID!).setValue(["tokenid":Token])
         
     }
+    
+    func displayHUD() {
+          SHUD.show(self.view, style: SHUDStyle.light, alignment: SHUDAlignment.horizontal, type: SHUDType.loading, text: "Signing up. Please wait...", nil)
+      }
+      
+      func removeHUD() {
+          SHUD.hide()
+      }
+    
+    func saveUserCredentials(username: String, password: String) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(username, forKey: NewConstants.kUserName)
+        userDefaults.synchronize()
+        // save password into keychain
+        let passwordItem = KeychainPasswordItem(service: KeychainConfig.serviceName, account: username, accessGroup: KeychainConfig.accessGroup)
+        do {
+            try passwordItem.savePassword(password)
+        }
+        catch let err {
+            self.removeHUD()
+            fatalError("Error updating keychain: \(err.localizedDescription)")
+        }
+    }
+    
     
     
     
@@ -740,6 +886,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     @IBAction func registerPressed(_ sender: AnyObject) {
         
         validator.validate(self)
+        
         
         let token: [String: AnyObject] = [Messaging.messaging().fcmToken!: Messaging.messaging().fcmToken as AnyObject]
         
@@ -765,13 +912,14 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
                 self.performSegue(withIdentifier: "toEditProfile", sender: self)
                 //print(self.userID!)
                 
+                 self.saveUserCredentials(username: email, password: password)
+                
                 self.postToken(Token: token)
                 
+                self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("notificationTokens").updateChildValues(token)
 
-                // let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                //let signinvc = storyboard.instantiateViewController(withIdentifier: "Home")
                 
-                // self.present(signinvc, animated: true, completion: nil)
+
                 print("User has Signed In")
             } else {
                 // Error
@@ -781,12 +929,71 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     }
     }
 
+
+
 struct FacebookPermission
 {
     static let Email: String = "email"
     static let UserPhotos: String = "user_photos"
     static let PublicProfile: String = "public_profile"
 }
+
+
+@available(iOS 13.0, *)
+
+extension SignUpVC: ASAuthorizationControllerPresentationContextProviding {
+    
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+}
+}
+    
+extension SignUpVC: ASAuthorizationControllerDelegate {
+
+  func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+    if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+      guard let nonce = currentNonce else {
+        fatalError("Invalid state: A login callback was received, but no login request was sent.")
+      }
+      guard let appleIDToken = appleIDCredential.identityToken else {
+        print("Unable to fetch identity token")
+        return
+      }
+      guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+        print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+        return
+      }
+      // Initialize a Firebase credential.
+      let credential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                idToken: idTokenString,
+                                                rawNonce: nonce)
+      // Sign in with Firebase.
+      Auth.auth().signIn(with: credential) { (authResult, error) in
+        if (error != nil) {
+          // Error. If error.code == .MissingOrInvalidNonce, make sure
+          // you're sending the SHA256-hashed nonce as a hex string with
+          // your request to Apple.
+            print(error?.localizedDescription)
+          return
+        }
+        // User is signed in to Firebase with Apple.
+        // ...
+        
+        self.performSegue(withIdentifier: "toEditProfile", sender: nil)
+        print("Successfully logged into Firebase")
+      }
+    }
+  }
+
+  func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+    // Handle error.
+    print("Sign in with Apple errored: \(error)")
+  }
+
+}
+
+
+
 
 
 

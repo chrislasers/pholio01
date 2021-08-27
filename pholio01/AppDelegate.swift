@@ -25,7 +25,6 @@ import FirebaseInstanceID
 import FirebaseMessaging
 
 
-
 enum GenderFilter: String {
     case male = "Male"
     case female = "Female"
@@ -70,9 +69,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-      
-       
-        
+//      
+//       let layout = UICollectionViewFlowLayout()
+//             window?.rootViewController = ProfileController(collectionViewLayout: layout)
+//        
         
         Auth.auth().addStateDidChangeListener { (auth, user) in
             
@@ -161,10 +161,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //Facebook Login
         
-        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-        
+        ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
+
         return true
     }
+    
+    
     
     override init() {
         FirebaseApp.configure()
@@ -174,6 +176,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
     }
+    
     
     //func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
     //    let handled = FBSDKApplicationDelegate.sharedInstance().application(app, open: url, options: options)
@@ -219,24 +222,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
-    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        
-        return FBSDKApplicationDelegate.sharedInstance().application(
-            app,
-            open: url as URL,
-            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
-            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
-        )
+    func resetBadge() {
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
-    public func application(_ application: UIApplication, open url: URL,     sourceApplication: String?, annotation: Any) -> Bool {
-        return FBSDKApplicationDelegate.sharedInstance().application(
-            application,
-            open: url as URL,
-            sourceApplication: sourceApplication,
-            annotation: annotation)
-    }
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+          return ApplicationDelegate.shared.application(app, open: url, options: options)
+      }
     
+//    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+//
+//        return FBSDKApplicationDelegate.sharedInstance().application(
+//            app,
+//            open: url as URL,
+//            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+//            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
+//        )
+//    }
+//
+//    public func application(_ application: UIApplication, open url: URL,sourceApplication: String?, annotation: Any) -> Bool {
+//        return FBSDKApplicationDelegate.sharedInstance().application(
+//            application,
+//            open: url as URL,
+//            sourceApplication: sourceApplication,
+//            annotation: annotation)
+//    }
+//
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -250,6 +261,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //    Messaging.messaging().shouldEstablishDirectChannel = false
         //    print("Disconnected from FCM.")//
        // }
+        
+        resetBadge()
         
         connectToFcm()
 
@@ -420,6 +433,8 @@ extension AppDelegate : MessagingDelegate {
         
         VC.postToken(Token: token)
         
+        let usersRef = Firestore.firestore().collection("users_table").document(userID ?? "nil")
+                         usersRef.updateData(["fcmToken": token])
         
         
     }

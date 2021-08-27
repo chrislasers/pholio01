@@ -25,7 +25,7 @@ class NewContentViewController: UIViewController, UIPageViewControllerDataSource
         pageViewController!.dataSource = self
         pageViewController!.delegate = self
         
-        let startingViewController: NewPreViewViewController = viewControllerAtIndex(index: currentIndex)!
+        let startingViewController: ProfileVC = viewControllerAtIndex(index: currentIndex)!
         let viewControllers = [startingViewController]
         pageViewController!.setViewControllers(viewControllers , direction: .forward, animated: false, completion: nil)
         pageViewController!.view.frame = view.bounds
@@ -53,7 +53,7 @@ class NewContentViewController: UIViewController, UIPageViewControllerDataSource
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController?
     {
-        var index = (viewController as! NewPreViewViewController).pageIndex
+        var index = (viewController as! ProfileVC).pageIndex
         if (index == 0) || (index == NSNotFound) {
             return nil
         }
@@ -63,7 +63,7 @@ class NewContentViewController: UIViewController, UIPageViewControllerDataSource
     
     //2
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        var index = (viewController as! PreViewController).pageIndex
+        var index = (viewController as! ProfileVC).pageIndex
         if index == NSNotFound {
             return nil
         }
@@ -75,13 +75,13 @@ class NewContentViewController: UIViewController, UIPageViewControllerDataSource
     }
     
     //3
-    func viewControllerAtIndex(index: Int) -> NewPreViewViewController? {
+    func viewControllerAtIndex(index: Int) -> ProfileVC? {
         if self.pages.count == 0 || index >= self.pages.count {
             return nil
         }
         
         // Create a new view controller and pass suitable data.
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "NewPreViewViewController") as! NewPreViewViewController
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ProfileVC") as! ProfileVC
         vc.pageIndex = index
         
         vc.items = self.pages[index].items
@@ -94,7 +94,7 @@ class NewContentViewController: UIViewController, UIPageViewControllerDataSource
     
     // Navigate to next page
     func goNextPage(fowardTo position: Int) {
-        let startingViewController: NewPreViewViewController = viewControllerAtIndex(index: position)!
+        let startingViewController: ProfileVC = viewControllerAtIndex(index: position)!
         let viewControllers = [startingViewController]
         pageViewController!.setViewControllers(viewControllers , direction: .forward, animated: true, completion: nil)
         

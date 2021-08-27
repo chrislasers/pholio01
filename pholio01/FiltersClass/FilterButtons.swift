@@ -23,13 +23,30 @@ class FilterButtons: UIButton {
     }
     
     func initButton() {
-        layer.borderWidth = 2.0
-        layer.borderColor = Colors.twitterBlue.cgColor
-        layer.cornerRadius = frame.size.height/2
         
-        setTitleColor(Colors.twitterBlue, for: .normal)
+        setShadow()
+
+        setTitleColor(.white, for: .normal)
+        
+        backgroundColor      = Colors.coolBlue
+        titleLabel?.font     = UIFont(name: "AvenirNext-DemiBold", size: 18)
+        layer.cornerRadius   = frame.size.height/2
+        layer.borderWidth    = 3.0
+        layer.borderColor    = UIColor.darkGray.cgColor
+        
         addTarget(self, action: #selector(FilterButtons.buttonPressed), for: .touchUpInside)
     }
+    
+    
+    private func setShadow() {
+        layer.shadowColor   = UIColor.black.cgColor
+        layer.shadowOffset  = CGSize(width: 0.0, height: 6.0)
+        layer.shadowRadius  = 8
+        layer.shadowOpacity = 0.5
+        clipsToBounds       = true
+        layer.masksToBounds = false
+    }
+    
     
     @objc func buttonPressed() {
         activateButton(bool: !isOn)

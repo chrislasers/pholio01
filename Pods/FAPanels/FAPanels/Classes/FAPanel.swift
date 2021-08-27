@@ -70,6 +70,7 @@ open class FAPanelController: UIViewController {
         setCenterPanelVC(controller, afterThat: completion)
     }
 
+    @discardableResult
     open func center( _ controller: UIViewController) -> FAPanelController {
         
         centerPanelVC = controller
@@ -77,6 +78,7 @@ open class FAPanelController: UIViewController {
     }
 
 
+    @discardableResult
     open func left( _ controller: UIViewController?) -> FAPanelController {
         
         leftPanelVC = controller
@@ -84,6 +86,7 @@ open class FAPanelController: UIViewController {
     }
 
     
+    @discardableResult
     open func right( _ controller: UIViewController?) -> FAPanelController {
         
         rightPanelVC = controller
@@ -209,6 +212,8 @@ open class FAPanelController: UIViewController {
         state = .center
         swapCenter(animated: false, FromVC: nil, withVC: centerPanelVC)
         view.bringSubviewToFront(centerPanelContainer)
+        tapView = UIView()
+        tapView?.alpha = 0.0
     }
     
     
@@ -519,7 +524,6 @@ open class FAPanelController: UIViewController {
     
     internal var _tapView: UIView? = nil
     internal var tapView: UIView? {
-        
         get{
             return _tapView
         }
@@ -528,16 +532,7 @@ open class FAPanelController: UIViewController {
                 _tapView?.removeFromSuperview()
                 _tapView = newValue
                 if _tapView != nil {
-                    
-                    if configs.showDarkOverlayUnderLeftPanelOnTop && leftPanelPosition == .front && state == .left
-                    {
-                        _tapView?.backgroundColor = configs.darkOverlayUnderLeftPanelOnTopColor
-                    }
-                    else if configs.showDarkOverlayUnderRightPanelOnTop && rightPanelPosition == .front && state == .right
-                    {
-                        _tapView?.backgroundColor = configs.darkOverlayUnderRightPanelOnTopColor
-                    }
-
+                    _tapView?.backgroundColor = configs.colorForTapView
                     _tapView?.frame = centerPanelContainer.bounds
                     _tapView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
                     addTapGestureToView(view: _tapView!)

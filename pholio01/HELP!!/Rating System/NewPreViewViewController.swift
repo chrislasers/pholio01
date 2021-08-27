@@ -284,14 +284,17 @@ class NewPreViewViewController: UIViewController, SegmentedProgressBarDelegate {
             DispatchQueue.global(qos: .background).async {
                 let imageData = NSData(contentsOf: URL(string: content!)!)
                 
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [self] in
                     let contentImage = UIImage(data: imageData! as Data)
                     self.imagePreview.image = contentImage
+                    
+                    
+                    let user = usersArray[self.pageIndex]
+                    
+                    self.lblUserName.text = user.username
                 }
             }
-            let user = usersArray[pageIndex]
             
-            lblUserName.text = user.username
             
             
             //self.imagePreview.image = UIImage(named: item[index]["item"]!)

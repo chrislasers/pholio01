@@ -227,7 +227,7 @@ class NewUpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        username.becomeFirstResponder
+        username.becomeFirstResponder()
         
         
         
@@ -551,6 +551,8 @@ class NewUpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         case .denied:
             // same same
             print("User has denied the permission.")
+        @unknown default:
+            fatalError()
         }
     }
     

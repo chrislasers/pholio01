@@ -27,61 +27,110 @@ import FirebaseMessaging
 import FacebookShare
 import FirebaseInstanceID
 import UICircularProgressRing
+import Lottie
+import AuthenticationServices
+import CryptoKit
 
 public enum Model : String {
-    case simulator     = "simulator/sandbox",
-    //iPod
-    iPod1              = "iPod 1",
-    iPod2              = "iPod 2",
-    iPod3              = "iPod 3",
-    iPod4              = "iPod 4",
-    iPod5              = "iPod 5",
-    //iPad
-    iPad2              = "iPad 2",
-    iPad3              = "iPad 3",
-    iPad4              = "iPad 4",
-    iPadAir            = "iPad Air ",
-    iPadAir2           = "iPad Air 2",
-    iPad5              = "iPad 5", //aka iPad 2017
-    iPad6              = "iPad 6", //aka iPad 2018
-    //iPad mini
-    iPadMini           = "iPad Mini",
-    iPadMini2          = "iPad Mini 2",
-    iPadMini3          = "iPad Mini 3",
-    iPadMini4          = "iPad Mini 4",
-    //iPad pro
-    iPadPro9_7         = "iPad Pro 9.7\"",
-    iPadPro10_5        = "iPad Pro 10.5\"",
-    iPadPro12_9        = "iPad Pro 12.9\"",
-    iPadPro2_12_9      = "iPad Pro 2 12.9\"",
-    //iPhone
-    iPhone4            = "iPhone 4",
-    iPhone4S           = "iPhone 4S",
-    iPhone5            = "iPhone 5",
-    iPhone5S           = "iPhone 5S",
-    iPhone5C           = "iPhone 5C",
-    iPhone6            = "iPhone 6",
-    iPhone6plus        = "iPhone 6 Plus",
-    iPhone6S           = "iPhone 6S",
-    iPhone6Splus       = "iPhone 6S Plus",
-    iPhoneSE           = "iPhone SE",
-    iPhone7            = "iPhone 7",
-    iPhone7plus        = "iPhone 7 Plus",
-    iPhone8            = "iPhone 8",
-    iPhone8plus        = "iPhone 8 Plus",
-    iPhoneX            = "iPhone X",
-    iPhoneXS           = "iPhone XS",
-    iPhoneXSMax        = "iPhone XS Max",
-    iPhoneXR           = "iPhone XR",
-    //Apple TV
-    AppleTV            = "Apple TV",
-    AppleTV_4K         = "Apple TV 4K",
-    unrecognized       = "?unrecognized?"
+
+//Simulator
+case simulator     = "simulator/sandbox",
+
+//iPod
+iPod1              = "iPod 1",
+iPod2              = "iPod 2",
+iPod3              = "iPod 3",
+iPod4              = "iPod 4",
+iPod5              = "iPod 5",
+
+//iPad
+iPad2              = "iPad 2",
+iPad3              = "iPad 3",
+iPad4              = "iPad 4",
+iPadAir            = "iPad Air ",
+iPadAir2           = "iPad Air 2",
+iPadAir3           = "iPad Air 3",
+iPadAir4           = "iPad Air 4",
+iPad5              = "iPad 5", //iPad 2017
+iPad6              = "iPad 6", //iPad 2018
+iPad7              = "iPad 7", //iPad 2019
+iPad8              = "iPad 8", //iPad 2020
+
+//iPad Mini
+iPadMini           = "iPad Mini",
+iPadMini2          = "iPad Mini 2",
+iPadMini3          = "iPad Mini 3",
+iPadMini4          = "iPad Mini 4",
+iPadMini5          = "iPad Mini 5",
+
+//iPad Pro
+iPadPro9_7         = "iPad Pro 9.7\"",
+iPadPro10_5        = "iPad Pro 10.5\"",
+iPadPro11          = "iPad Pro 11\"",
+iPadPro2_11        = "iPad Pro 11\" 2nd gen",
+iPadPro12_9        = "iPad Pro 12.9\"",
+iPadPro2_12_9      = "iPad Pro 2 12.9\"",
+iPadPro3_12_9      = "iPad Pro 3 12.9\"",
+iPadPro4_12_9      = "iPad Pro 4 12.9\"",
+
+//iPhone
+iPhone4            = "iPhone 4",
+iPhone4S           = "iPhone 4S",
+iPhone5            = "iPhone 5",
+iPhone5S           = "iPhone 5S",
+iPhone5C           = "iPhone 5C",
+iPhone6            = "iPhone 6",
+iPhone6Plus        = "iPhone 6 Plus",
+iPhone6S           = "iPhone 6S",
+iPhone6SPlus       = "iPhone 6S Plus",
+iPhoneSE           = "iPhone SE",
+iPhone7            = "iPhone 7",
+iPhone7Plus        = "iPhone 7 Plus",
+iPhone8            = "iPhone 8",
+iPhone8Plus        = "iPhone 8 Plus",
+iPhoneX            = "iPhone X",
+iPhoneXS           = "iPhone XS",
+iPhoneXSMax        = "iPhone XS Max",
+iPhoneXR           = "iPhone XR",
+iPhone11           = "iPhone 11",
+iPhone11Pro        = "iPhone 11 Pro",
+iPhone11ProMax     = "iPhone 11 Pro Max",
+iPhoneSE2          = "iPhone SE 2nd gen",
+iPhone12Mini       = "iPhone 12 Mini",
+iPhone12           = "iPhone 12",
+iPhone12Pro        = "iPhone 12 Pro",
+iPhone12ProMax     = "iPhone 12 Pro Max",
+
+//Apple TV
+AppleTV            = "Apple TV",
+AppleTV_4K         = "Apple TV 4K",
+unrecognized       = "?unrecognized?"
 }
 
 
 
+
 class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, ValidationDelegate, CLLocationManagerDelegate, UICircularProgressRingDelegate {
+    func didFinishProgress(for ring: UICircularProgressRing) {
+         print("Finish Progress!")
+    }
+    
+    func didPauseProgress(for ring: UICircularProgressRing) {
+         print("Finish Pause!")
+    }
+    
+    func didContinueProgress(for ring: UICircularProgressRing) {
+         print("FinishContinue Progress!")
+    }
+    
+    func didUpdateProgressValue(for ring: UICircularProgressRing, to newValue: CGFloat) {
+         print("Finish Update Progress Value!")
+    }
+    
+    func willDisplayLabel(for ring: UICircularProgressRing, _ label: UILabel) {
+         print("Finish Display Label Value!")
+    }
+    
     
     
     func validationSuccessful() {
@@ -89,10 +138,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         validator.registerField(email, errorLabel: emailValid, rules: [RequiredRule(), EmailRule(message: "Invalid email")])
         
         validator.registerField(password, errorLabel: passwordValid, rules: [RequiredRule(), PasswordRule(message: "Must be 8 characters. One uppercase. One Lowercase. One number.")])
-        
-        
-        
-        
+       
         print("Validation Success!")
         
         
@@ -120,22 +166,22 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         return hud
     }()
     
-    
-    
-    
     var ref : DatabaseReference!
-
     let userID = Auth.auth().currentUser?.uid
-
     let validator = Validator()
-    
+    let biometricAuth = BiometricAuth()
     let Model: String = "Model"
+    
 
     
     
     @IBOutlet weak var email: UITextField!
     
     @IBOutlet weak var password: UITextField!
+    
+    
+    
+    @IBOutlet weak var biometricButton: UIButton!
     
     
     
@@ -154,6 +200,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
     
     @IBOutlet var forgetPassword: UIButton!
     
+
     @IBOutlet var newLogo: UIImageView!
     
     
@@ -162,10 +209,20 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+       ///Login With FaceID
+//
+//        let myButton = UIButton(frame: CGRect(x: 165, y: 743, width: 50, height: 50))
+//          let img = UIImage(named: "faceid")
+//        myButton.setImage(img , for: .normal)
+//           myButton.addTarget(self, action: #selector(loginWithBiometricAuth), for: .touchUpInside)
+//           self.view.addSubview(myButton)
+        
+         ref = Database.database().reference()
+        
+        
+        setupSignInButton()
 
-        
-        
-        ref = Database.database().reference()
         
         var signInWithFbButton: UIButton {
             
@@ -176,160 +233,167 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             myLoginButton.setTitle("Login with Facebook", for: .normal)
             myLoginButton.setTitleColor(UIColor.white, for: .normal)
             myLoginButton.layer.cornerRadius = 7
-            
-             myLoginButton.layer.borderColor = UIColor.white.cgColor
-            
+            myLoginButton.layer.borderColor = UIColor.white.cgColor
             myLoginButton.layer.borderWidth = 1.0
-
-            
-            
             myLoginButton.setImage(#imageLiteral(resourceName: "flogo_RGB_HEX-144").withRenderingMode(.automatic), for: .normal)
             myLoginButton.tintColor = .white
             myLoginButton.contentMode = .scaleAspectFill
-            
-            
             myLoginButton.titleLabel?.font = UIFont.boldSystemFont(ofSize:  16)
             myLoginButton.layer.masksToBounds = true
             // Handle clicks on the button
             myLoginButton.addTarget(self, action: #selector(loginButtonClicked), for: .touchUpInside)
-            
+           
             _ = UIDevice().type.rawValue
             
             switch UIDevice().type {
                 
                 
             case .iPhoneSE:
-                
-                 myLoginButton.frame = CGRect(x: 40, y: 510, width: 253, height: 47)
-                
+                 myLoginButton.frame = CGRect(x: 40, y: 525, width: 253, height: 47)
                 
             case .iPhone5S:
-                
-                myLoginButton.frame = CGRect(x: 40, y: 510, width: 253, height: 47)
+                myLoginButton.frame = CGRect(x: 40, y: 525, width: 253, height: 47)
                 
             case .iPhone6, .iPhone7, .iPhone6S,.iPhone8:
+                myLoginButton.frame = CGRect(x: 50, y: 620, width: view.frame.width - 105, height: 47)
                 
-                myLoginButton.frame = CGRect(x: 50, y: 605, width: view.frame.width - 105, height: 47)
-                
-            case .iPhone6plus:
-                
-                myLoginButton.frame = CGRect(x: 50, y: 610, width: view.frame.width - 105, height: 47)
+            case .iPhone6SPlus:
+                myLoginButton.frame = CGRect(x: 50, y: 630, width: view.frame.width - 105, height: 47)
 
+            case .iPhone7Plus:
+                myLoginButton.frame = CGRect(x: 50, y: 630, width: view.frame.width - 105, height: 47)
                 
-            case .iPhone6Splus:
+            case .iPhone8Plus:
+                myLoginButton.frame = CGRect(x: 50, y: 6255, width: view.frame.width - 98, height: 47)
                 
-                myLoginButton.frame = CGRect(x: 50, y: 610, width: view.frame.width - 100, height: 47)
-                
-            case .iPhone7plus:
-                
-                myLoginButton.frame = CGRect(x: 50, y: 615, width: view.frame.width - 105, height: 47)
-                
-            case .iPhone8plus:
-                
-                myLoginButton.frame = CGRect(x: 50, y: 610, width: view.frame.width - 98, height: 47)
-                
-            case .iPhoneX, .simulator:
-                myLoginButton.frame = CGRect(x: 50, y: 650, width: view.frame.width - 105, height: 47)
+            case .iPhoneX:
+                myLoginButton.frame = CGRect(x: 50, y: 790, width: view.frame.width - 105, height: 47)
                 
             case .iPhoneXS, .iPhoneXR:
-                
-                myLoginButton.frame = CGRect(x: 50, y: 685, width: view.frame.width - 98, height: 47)
-                
+                myLoginButton.frame = CGRect(x: 50, y: 700, width: view.frame.width - 98, height: 47)
                 
             case .iPhoneXSMax:
+                myLoginButton.frame = CGRect(x: 50, y: 700, width: view.frame.width - 100, height: 47)
                 
-                myLoginButton.frame = CGRect(x: 50, y: 660, width: view.frame.width - 100, height: 47)
+            case .iPhone11:
+                myLoginButton.frame = CGRect(x: 50, y: 790, width: view.frame.width - 105, height: 47)
                 
+            case .iPhone11Pro:
+                myLoginButton.frame = CGRect(x: 50, y: 705, width: view.frame.width - 105, height: 47)
                 
-            default:break
+            case .iPhone11ProMax:
+                myLoginButton.frame = CGRect(x: 50, y: 796, width: view.frame.width - 105, height: 47)
+            
+            case .iPhone12:
+                myLoginButton.frame = CGRect(x: 50, y: 730, width: view.frame.width - 105, height: 47)
+                
+            case .iPhone12Pro:
+                myLoginButton.frame = CGRect(x: 50, y: 730, width: view.frame.width - 105, height: 47)
+                
+            case .iPhone12ProMax:
+                myLoginButton.frame = CGRect(x: 50, y: 815, width: view.frame.width - 105, height: 47)
+                
+            case .iPhone12Mini:
+                
+                myLoginButton.frame = CGRect(x: 50, y: 700, width: view.frame.width - 98, height: 47)
+
+            default:
+                print(UIDevice().type.rawValue + " not supported by this app");
+
             }
 
         
             return myLoginButton
         }
-        // Add the button to the view
-        view.addSubview(signInWithFbButton)
-        
+        // Add the FACEBOOK button to the view
+        //view.addSubview(signInWithFbButton)
+
         switch UIDevice().type {
-            
-            
+
+
         case .iPhoneSE:
-            
-        
+
+
         newLogo.frame = CGRect(x: 115, y: 97, width: 100, height: 100)
-        
+
         Logo.frame = CGRect(x: 83, y: 64, width: 165, height: 165)
-            
+
         case .iPhone5S:
-          
-            
-            /////////////////////////////////////
-            
+
             newLogo.frame = CGRect(x: 115, y: 97, width: 100, height: 100)
-            
+
             Logo.frame = CGRect(x: 83, y: 64, width: 165, height: 165)
-            
-         
-            
-        case .iPhone7plus:
-            
+
+        case .iPhone7Plus:
+
             newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
-        
+
         Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
-        
-        // Create the view
-        let progressRing = UICircularProgressRing(frame: CGRect(x: 95, y: 57, width: 225, height: 225))
-        // Change any of the properties you'd like
-        
-        
-        progressRing.outerRingColor = UIColor.orange
-        progressRing.outerRingWidth = 3.0
-        progressRing.shouldShowValueText = false
-        progressRing.gradientColors = [UIColor.orange]
-        //progressRing.minValue = 0
-        //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-        // progressRing.valueKnobShadowColor = UIColor.orange
-        
-        
-        progressRing.startProgress(to: 0, duration: 0.0) {
-            print("Done animating!")
-            
-            progressRing.startProgress(to: 100, duration: 0.75)        }
-        
-        self.view.addSubview(progressRing)
-            
-        case .iPhone8plus:
-            
+
+
+        case .iPhone8Plus:
+
             newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
-        
+
         Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
-        
-    
-            
-            
+
         case .iPhoneXR:
 
         newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
-        
+
         Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
-            
-            
+
+
         case .iPhoneXS:
             
-            newLogo.frame = CGRect(x: 102, y: 113, width: 170, height: 170)
+            newLogo.frame = CGRect(x: 116, y: 137, width: 145, height: 145)
+
+            Logo.frame = CGRect(x: 83, y: 104, width: 210, height: 210)
             
-            Logo.frame = CGRect(x: 69, y: 81, width: 235, height: 235)
-        
         case .iPhoneXSMax:
-            
+
             newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
-            
+
             Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
             
-    
+        case .iPhone11Pro:
+            
+            newLogo.frame = CGRect(x: 103, y: 120, width: 170, height: 170)
+
+            Logo.frame = CGRect(x: 63, y: 80, width: 250, height: 250)
+            
+        case .iPhone11ProMax:
+            newLogo.frame = CGRect(x: 100, y: 137, width: 220, height: 220)
+
+            Logo.frame = CGRect(x: 44, y: 82, width: 330, height: 330)
+      
+        case .iPhone12:
+            newLogo.frame = CGRect(x: 110, y: 140, width: 170, height: 170)
+
+            Logo.frame = CGRect(x: 70, y: 100, width: 250, height: 250)
+            
+        case .iPhone12Pro:
+            
+            newLogo.frame = CGRect(x: 110, y: 140, width: 170, height: 170)
+
+            Logo.frame = CGRect(x: 70, y: 100, width: 250, height: 250)
+            
+        case .iPhone12ProMax:
+            
+            newLogo.frame = CGRect(x: 110, y: 137, width: 220, height: 220)
+
+            Logo.frame = CGRect(x: 54, y: 84, width: 330, height: 330)
+            
+        case .iPhone12Mini:
+            
+            newLogo.frame = CGRect(x: 116, y: 137, width: 145, height: 145)
+
+            Logo.frame = CGRect(x: 83, y: 104, width: 210, height: 210)
+            
+
         default:break
         }
-        
+
     
         email.keyboardType = .emailAddress
         //email.placeholder = "Email Address"
@@ -338,13 +402,14 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         // password.placeholder = "Password"
         self.view.addSubview(password)
 
-        
+
           self.Logo.layer.cornerRadius = self.Logo.frame.size.height / 2
-        
+        self.newLogo.layer.cornerRadius = self.Logo.frame.size.height / 2
+
          self.Logo.layer.shadowColor = UIColor.black.cgColor
-         self.Logo.layer.shadowRadius = 2.5
-         self.Logo.layer.shadowOpacity = 1.0
-         self.Logo.layer.shadowOffset = CGSize(width: 1.25, height: 1.25)
+         self.Logo.layer.shadowRadius = 9
+         self.Logo.layer.shadowOpacity = 1.5
+        self.Logo.layer.shadowOffset = CGSize(width: 2, height: 2)
         
         
         
@@ -405,14 +470,8 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             }
         })
         
-        
-        
-        
-        
-        
+    
         validator.registerField(email, errorLabel: emailValid, rules: [RequiredRule(), EmailRule(message: "Invalid Email")])
-        
-        
         
         validator.registerField(password, errorLabel: passwordValid, rules: [RequiredRule(), PasswordRule(message: "Invalid Password")])
         
@@ -449,6 +508,11 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     
     
     
@@ -494,6 +558,109 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         didSetupWhiteTintColorForClearTextFieldButton = true
     }
     
+    func setupSignInButton() {
+        
+        let signInButton = ASAuthorizationAppleIDButton()
+        signInButton.addTarget(self, action: #selector(handleSignWithAppleTapped), for: .touchUpInside)
+       
+        signInButton.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(signInButton)
+        
+        
+        NSLayoutConstraint.activate([
+            signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -70),
+                   signInButton.heightAnchor.constraint(equalToConstant: 45),
+                   signInButton.widthAnchor.constraint(equalToConstant: 280)
+               ])
+    }
+    
+    @objc func handleSignWithAppleTapped() {
+        performSignIn()
+    }
+    
+    func performSignIn() {
+        
+        let request = createAppleIDRequest()
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+        
+    }
+    
+    func createAppleIDRequest() -> ASAuthorizationAppleIDRequest {
+        
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        
+        let nonce = randomNonceString()
+        request.nonce = sha256(nonce)
+        currentNonce = nonce
+        
+        return request
+    }
+    
+    
+    // Unhashed nonce.
+    fileprivate var currentNonce: String?
+
+    @available(iOS 13, *)
+    func startSignInWithAppleFlow() {
+      let nonce = randomNonceString()
+      currentNonce = nonce
+      let appleIDProvider = ASAuthorizationAppleIDProvider()
+      let request = appleIDProvider.createRequest()
+      request.requestedScopes = [.fullName, .email]
+      request.nonce = sha256(nonce)
+    }
+
+    @available(iOS 13, *)
+    private func sha256(_ input: String) -> String {
+      let inputData = Data(input.utf8)
+      let hashedData = SHA256.hash(data: inputData)
+      let hashString = hashedData.compactMap {
+        return String(format: "%02x", $0)
+      }.joined()
+
+      return hashString
+    }
+    
+    // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
+    private func randomNonceString(length: Int = 32) -> String {
+      precondition(length > 0)
+      let charset: Array<Character> =
+          Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+      var result = ""
+      var remainingLength = length
+
+      while remainingLength > 0 {
+        let randoms: [UInt8] = (0 ..< 16).map { _ in
+          var random: UInt8 = 0
+          let errorCode = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
+          if errorCode != errSecSuccess {
+            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+          }
+          return random
+        }
+
+        randoms.forEach { random in
+          if remainingLength == 0 {
+            return
+          }
+
+          if random < charset.count {
+            result.append(charset[Int(random)])
+            remainingLength -= 1
+          }
+        }
+      }
+
+      return result
+    }
+
+    
     override func viewWillLayoutSubviews() {
         
         super.viewWillLayoutSubviews()
@@ -519,13 +686,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
 
         
         switch UIDevice().type {
-            
-            
         
-            
-            
-            
-            
         case .iPhone5S:
             
             email.frame = CGRect(x: 51, y: 250, width: 220, height: 45)
@@ -601,30 +762,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             signIn.frame = CGRect(x: 42, y: 410, width: 250, height: 45)
             
             signUp.frame = CGRect(x: 42, y: 460, width: 250, height: 45)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 75, y:55, width: 180, height: 180))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-
-            
-            
+        
         case .iPhone5S:
             
             email.frame = CGRect(x: 42, y: 241, width: 250, height: 45)
@@ -644,28 +782,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             
             signUp.frame = CGRect(x: 42, y: 460, width: 250, height: 45)
             
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 75, y:55, width: 180, height: 180))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-            
+        
         case .iPhone6:
             
             email.frame = CGRect(x: 51, y: 306, width: 275, height: 45)
@@ -685,29 +802,8 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             
             signUp.frame = CGRect(x: 51, y: 548, width: 275, height: 45)
             
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 75, y: 57, width: 225, height: 225))
-            // Change any of the properties you'd like
             
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-            
-        case .iPhone6plus:
+        case .iPhone6Plus:
             
             email.frame = CGRect(x: 51, y: 306, width: 314, height: 45)
             
@@ -729,31 +825,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
             
             Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 95, y: 57, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-            
-            
-            
+          
         case .iPhone6S:
             
             email.frame = CGRect(x: 51, y: 306, width: 275, height: 45)
@@ -778,28 +850,8 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             
             Logo.frame = CGRect(x: 80, y: 64, width: 210, height: 210)
             
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 75, y:55, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-         case .iPhone6Splus:
+           
+         case .iPhone6SPlus:
             
             email.frame = CGRect(x: 51, y: 306, width: 314, height: 45)
             
@@ -821,31 +873,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             newLogo.frame = CGRect(x: 127, y: 97, width: 145, height: 145)
             
             Logo.frame = CGRect(x: 95, y: 64, width: 210, height: 210)
-            
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 87, y:55, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-            
-            
+          
         case .iPhone7:
             
             email.frame = CGRect(x: 51, y: 306, width: 275, height: 45)
@@ -869,31 +897,8 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             newLogo.frame = CGRect(x: 112, y: 97, width: 145, height: 145)
             
             Logo.frame = CGRect(x: 80, y: 64, width: 210, height: 210)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 72, y: 53, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-            
-        
-        case .iPhone7plus:
+       
+        case .iPhone7Plus:
             
             
             email.frame = CGRect(x: 51, y: 306, width: 314, height: 45)
@@ -916,28 +921,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
     
         Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
-        
-        // Create the view
-        let progressRing = UICircularProgressRing(frame: CGRect(x: 95, y: 57, width: 225, height: 225))
-        // Change any of the properties you'd like
-        
-        
-        progressRing.outerRingColor = UIColor.orange
-        progressRing.outerRingWidth = 3.0
-        progressRing.shouldShowValueText = false
-        progressRing.gradientColors = [UIColor.orange]
-        //progressRing.minValue = 0
-        //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-        // progressRing.valueKnobShadowColor = UIColor.orange
-        
-        
-        progressRing.startProgress(to: 0, duration: 0.0) {
-            print("Done animating!")
-            
-            progressRing.startProgress(to: 100, duration: 0.75)        }
-        
-        self.view.addSubview(progressRing)
-            
+       
             
         case .iPhone8:
             
@@ -957,31 +941,8 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             signIn.frame = CGRect(x: 51, y: 495, width: 275, height: 45)
             
             signUp.frame = CGRect(x: 51, y: 548, width: 275, height: 45)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 75, y: 57, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-            
-            
-        case .iPhone8plus:
+          
+        case .iPhone8Plus:
             
             email.frame = CGRect(x: 51, y: 306, width: 314, height: 45)
             
@@ -999,28 +960,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             signIn.frame = CGRect(x: 51, y: 495, width: 314, height: 45)
             
             signUp.frame = CGRect(x: 51, y: 548, width: 314, height: 45)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 95, y: 57, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
+           
             
         case .iPhoneX:
             
@@ -1041,32 +981,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             signIn.frame = CGRect(x: 51, y: 519, width: 275, height: 45)
             
             signUp.frame = CGRect(x: 51, y: 570, width: 275, height: 45)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 75, y: 55, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-            
-            
          
-            
         case .iPhoneXS:
             
             
@@ -1087,28 +1002,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             signIn.frame = CGRect(x: 51, y: 568, width: 275, height: 45)
             
             signUp.frame = CGRect(x: 51, y: 622, width: 275, height: 45)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 61, y: 72, width: 250, height: 250))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
+         
         case .iPhoneXR:
             
             
@@ -1128,27 +1022,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             signIn.frame = CGRect(x: 51, y: 519, width: 314, height: 45)
             
             signUp.frame = CGRect(x: 51, y: 572, width: 314, height: 45)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 95, y: 57, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 1.5
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
+           
             
         case .iPhoneXSMax:
             
@@ -1169,40 +1043,9 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             signIn.frame = CGRect(x: 51, y: 519, width: 314, height: 45)
             
             signUp.frame = CGRect(x: 51, y: 572, width: 314, height: 45)
-            
-            // Create the view
-            let progressRing = UICircularProgressRing(frame: CGRect(x: 95, y: 55, width: 225, height: 225))
-            // Change any of the properties you'd like
-            
-            
-            progressRing.outerRingColor = UIColor.orange
-            progressRing.outerRingWidth = 3.0
-            progressRing.shouldShowValueText = false
-            progressRing.gradientColors = [UIColor.orange]
-            //progressRing.minValue = 0
-            //progressRing.ringStyle = UICircularProgressRingStyle(rawValue: 3)!
-            // progressRing.valueKnobShadowColor = UIColor.orange
-            
-            
-            progressRing.startProgress(to: 0, duration: 0.0) {
-                print("Done animating!")
-                
-                progressRing.startProgress(to: 100, duration: 0.75)        }
-            
-            self.view.addSubview(progressRing)
-            
-            
-        default: break
-            
            
-            
+        default: break
         }
-        
-        
-      
-        
-        
-        
     }
     
     
@@ -1250,36 +1093,20 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         signUp.layer.shadowColor = UIColor.white.cgColor
         signUp.layer.shadowRadius = 2
         signUp.layer.shadowOpacity = 0.2
-        signUp.layer.shadowOffset = CGSize(width: 0, height: 0)    }
-    
-    
-  
-    
-    
-    
+        signUp.layer.shadowOffset = CGSize(width: 0, height: 0)
+     
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-
-        
-        //ref = Database.database().reference().child("Users").child((Auth.auth().currentUser?.uid)!).child("finished")
-
-
-  
-
             
             DispatchQueue.main.async {
                 
         if Auth.auth().currentUser != nil {
-            
-            
-            
            DBService.shared.users.child(Auth.auth().currentUser!.uid).child("Yes").observeSingleEvent(of: .value, with: { (snapshot) in
                 print(snapshot)
                 
             if snapshot.exists(){
-
-                    
                    print("User Signed In")
                    self.performSegue(withIdentifier: "homepageVC", sender: nil)
                     
@@ -1288,7 +1115,6 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
                     print("User Didn't Complete Sign In")
 
                 }
-            
                         })
                     }
                 }
@@ -1301,36 +1127,31 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         NotificationCenter.default.addObserver(self, selector:#selector(keyboardWillChange), name: UIResponder.keyboardWillShowNotification, object: nil)
         
         
-        
+
         let pastelView = PastelView(frame: view.bounds)
-        
+
         //MARK: -  Custom Direction
         pastelView.startPastelPoint = .bottomLeft
         pastelView.endPastelPoint = .topRight
-        
+
         //MARK: -  Custom Duration
-        
+
         pastelView.animationDuration = 3.00
-        
+
         //MARK: -  Custom Color
         pastelView.setColors([
-            
+
             UIColor(red: 255/255, green: 64/255, blue: 129/255, alpha: 1.0),
-            
-            
+
+
             UIColor(red: 123/255, green: 31/255, blue: 162/255, alpha: 1.0),
-            
-        
-        
+
+
+
         UIColor(red: 50/255, green: 157/255, blue: 240/255, alpha: 1.0)])
-        
-        //   UIColor(red: 90/255, green: 120/255, blue: 127/255, alpha: 1.0),
-        
-        
-        //  UIColor(red: 58/255, green: 255/255, blue: 217/255, alpha: 1.0)])
-        
+
         pastelView.startAnimation()
-        view.insertSubview(pastelView, at: 3)
+        view.insertSubview(pastelView, at: 1)
         
     }
     
@@ -1348,63 +1169,118 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
     
     //FACEBOOK INTEGRATION
     
+    
+
+    
     @objc func loginButtonClicked() {
-        
-        hud.textLabel.text =  "Logging in with Facebook..."
-        hud.show(in: view, animated: true)
-        
-        let loginManager = LoginManager()
-        loginManager.logIn(readPermissions:
-        [ .publicProfile, .email], viewController: self) { (result) in
-            switch result {
-            case .success(grantedPermissions: _, declinedPermissions: _, token: _):
-                
-                
-                print("Successfully logged into Facebook")
-                
-                
-                //self.performSegue(withIdentifier: "homepageVC", sender: nil)
-                
-                
-                
-                self.signIntoFirebase()
-                
-            case .failed(let error):
-                Service.dismissHud(self.hud, text: "Error", detailText: "Canceled getting Facebook user: \(error)", delay: 1)
-            case .cancelled:
-                Service.dismissHud(self.hud, text: "Error", detailText: "Canceled getting Facebook user", delay: 1)
-                break
-            }
-        }
+           
+           hud.textLabel.text =  "Logging in with Facebook..."
+           hud.show(in: view, animated: true)
+                    
+
+           
+           let loginManager = LoginManager()
+                  loginManager.logIn(permissions: ["public_profile", "email"], from: self) { (result, error) in
+                      if let error = error {
+                          print("Failed to login: \(error.localizedDescription)")
+                          return
+                      }
+                      
+                      guard let accessToken = AccessToken.current else {
+                          print("Failed to get access token")
+                          return
+                      }
+           
+                      let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.tokenString)
+                      
+                      // Perform login by calling Firebase APIs
+                      Auth.auth().signIn(with: credential, completion: { (user, error) in
+                        
+                        let id = Auth.auth().currentUser?.uid
+                        let ref = Database.database().reference(withPath: "Users")
+
+                        ref.child(id!).observeSingleEvent(of: .value, with: {(snapshot) in
+                            if snapshot.exists() {
+                                
+                                
+                                self.performSegue(withIdentifier: "homepageVC", sender: nil)
+                                print("Successfully logged into Firebase")
+                                self.hud.dismiss(animated: true)
+
+                            
+                                
+                                
+                            } else {
+                                
+                                
+                                //User is signing UP
+                                 print("Login error: \(String(describing: error?.localizedDescription))")
+                                                               let alertController = UIAlertController(title: "Login Error", message: error?.localizedDescription, preferredStyle: .alert)
+                                                               let okayAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                                                               alertController.addAction(okayAction)
+                                                               self.present(alertController, animated: true, completion: nil)
+                                
+                                
+                                
+                            }
+                        
+
+                      
+                      })
+           
+                  })
+               }
     }
     
-    fileprivate func signIntoFirebase() {
-        
-        guard let authenticationToken = AccessToken.current?.authenticationToken else {return}
-        
-        let credential = FacebookAuthProvider.credential(withAccessToken: authenticationToken)
-        
-        Auth.auth().signInAndRetrieveData(with: credential) { (authResult, error) in
-            if let error = error {
-                Service.dismissHud(self.hud, text: "Sign Up Error", detailText: error.localizedDescription, delay: 1)
-                return
-            }
-            
-
-            self.performSegue(withIdentifier: "homepageVC", sender: nil)
-            print("Successfully logged into Firebase")
-            self.hud.dismiss(animated: true)
-            
-        }
-    }
+    
+                  
+              
+//
+//    fileprivate func signIntoFirebase(accessToken: String) {
+//
+//       // guard let authenticationToken = AccessToken.current?.authenticationToken else {return}
+//
+//        let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+//
+//        Auth.auth().signInAndRetrieveData(with: credential) { (authResult, error) in
+//            if let error = error {
+//                Service.dismissHud(self.hud, text: "Sign Up Error", detailText: error.localizedDescription, delay: 1)
+//                return
+//            }
+//
+//
+//            self.performSegue(withIdentifier: "homepageVC", sender: nil)
+//            print("Successfully logged into Firebase")
+//            self.hud.dismiss(animated: true)
+//
+//        }
+//    }
     
    override func viewDidAppear(_ animated: Bool) {
        super.viewDidAppear(animated)
     
-    
-    
     ref = Database.database().reference()
 
+                    let biometricEnabled = UserDefaults.standard.value(forKey: NewConstants.kBiometricEnabled) as? Bool
+                    if biometricEnabled != nil && biometricEnabled == true && biometricAuth.canEvaluatePolicy() {
+                        biometricButton.isHidden = false
+                        
+                    } else {
+                        biometricButton.isHidden = true
+                    }
+                    
+                    switch biometricAuth.biometricType() {
+                    case .FaceID:
+                        biometricButton.setImage(#imageLiteral(resourceName: "faceid"), for: UIControl.State.normal)
+                    default:
+                        biometricButton.setImage(#imageLiteral(resourceName: "touchid"), for: UIControl.State.normal)
+                    }
+                    
+                    
+                    if let userName = UserDefaults.standard.value(forKey: NewConstants.kUserName) as? String {
+                        email.text = userName
+            
+                    }
     
      // if Auth.auth().currentUser != nil {
             
@@ -1425,6 +1301,15 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
        }
     
     
+    
+    
+       func displayHUD() {
+            SHUD.show(self.view, style: SHUDStyle.light, alignment: SHUDAlignment.horizontal, type: SHUDType.loading, text: "Logging in. Please wait...", nil)
+       }
+       
+       func removeHUD() {
+           SHUD.hide()
+       }
     
     
     
@@ -1579,7 +1464,6 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
     }
     
     
-    
     @IBAction func signUpPRESSED(_ sender: Any) {
         
         self.performSegue(withIdentifier: "showSignUp", sender: nil)
@@ -1609,14 +1493,62 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         
         let dbRef = Database.database().reference()
         dbRef.child("fcmToken").child(Messaging.messaging().fcmToken!).setValue(Token)
+        dbRef.child("fcmToken").child(Messaging.messaging().fcmToken!).updateChildValues(Token)
+
         
         
     }
+    
+    func authenticateUserWith(email: String, password: String) {
+                         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
+                             
+                             self.removeHUD()
+                             
+                             guard error == nil else {
+                                 self.showAlert(message: error!.localizedDescription)
+                                 return
+                                 
+                             }
+                             guard let _ = result?.user else {return}
+                             
+                             // save user's credetials in keychain
+                             if UserDefaults.standard.value(forKey: NewConstants.kUserName) == nil {
+                                 // save user's username into userdefaults
+                                 let userDefaults = UserDefaults.standard
+                                 userDefaults.set(email, forKey: NewConstants.kUserName)
+                                 userDefaults.synchronize()
+                                 // save password into keychain
+                                 let passwordItem = KeychainPasswordItem(service: KeychainConfig.serviceName, account: email, accessGroup: KeychainConfig.accessGroup)
+                                 do {
+                                     try passwordItem.savePassword(password)
+                                 }
+                                 catch let err {
+                                     fatalError("Error updating keychain: \(err.localizedDescription)")
+                                 }
+                             }
+                             
+                             let biometricEnabled = UserDefaults.standard.value(forKey: NewConstants.kBiometricEnabled) as? Bool
+                             if biometricEnabled != nil && biometricEnabled == true {
+                                
+                                 self.performSegue(withIdentifier: "homepageVC", sender: self)
+                             } else if self.biometricAuth.canEvaluatePolicy() == true {
+                                 self.performSegue(withIdentifier: "showBiometric", sender: self)
+                             } else {
+                                 self.performSegue(withIdentifier: "homepageVC", sender: self)
+                             }
+                             
+                             
+                            
+                         }
+                     }
+                  
     
     
     @IBAction func signinPRESSED(_ sender: Any){
         
        // let token: [String: AnyObject] = [Messaging.messaging().fcmToken!: Messaging.messaging().fcmToken as AnyObject]
+    
+
         
         validator.validate(self)
         
@@ -1626,6 +1558,48 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         FriendSystem.system.loginAccount(email, password: password) { (success) in
             if success {
                 self.performSegue(withIdentifier: "homepageVC", sender: nil)
+                
+              func authenticateUserWith(email: String, password: String) {
+                       Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
+                           
+                           self.removeHUD()
+                           
+                           guard error == nil else {
+                               self.showAlert(message: error!.localizedDescription)
+                               return
+                               
+                           }
+                           guard let _ = result?.user else {return}
+                           
+                           // save user's credetials in keychain
+                           if UserDefaults.standard.value(forKey: NewConstants.kUserName) == nil {
+                               // save user's username into userdefaults
+                               let userDefaults = UserDefaults.standard
+                               userDefaults.set(email, forKey: NewConstants.kUserName)
+                               userDefaults.synchronize()
+                               // save password into keychain
+                               let passwordItem = KeychainPasswordItem(service: KeychainConfig.serviceName, account: email, accessGroup: KeychainConfig.accessGroup)
+                               do {
+                                   try passwordItem.savePassword(password)
+                               }
+                               catch let err {
+                                   fatalError("Error updating keychain: \(err.localizedDescription)")
+                               }
+                           }
+                           
+                           let biometricEnabled = UserDefaults.standard.value(forKey: NewConstants.kBiometricEnabled) as? Bool
+                           if biometricEnabled != nil && biometricEnabled == true {
+                               self.performSegue(withIdentifier: "homepageVC", sender: self)
+                           } else if self.biometricAuth.canEvaluatePolicy() == true {
+                               self.performSegue(withIdentifier: "showBiometric", sender: self)
+                           } else {
+                               self.performSegue(withIdentifier: "homepageVC", sender: self)
+                           }
+                           
+                           
+                          
+                       }
+                   }
                 
               //  self.postToken(Token: token)
                 
@@ -1643,113 +1617,257 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             }
         }
 }
+    
+    
+    func showAlert(message: String) {
+           let alertVC = UIAlertController(title: "Error!", message: message, preferredStyle: UIAlertController.Style.alert)
+           alertVC.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+           present(alertVC, animated: true, completion: nil)
+       }
+    
+    
+    @IBAction func loginWithBiometricAuth(_ sender: Any) {
+        
+        biometricAuth.authenticateUser { (message) in
+                   
+                   self.displayHUD()
+                   
+                   if let message = message {
+                    
+                      self.performSegue(withIdentifier: "homepageVC", sender: self)
+                       self.removeHUD()
+                       self.showAlert(message: message)
+                    
+                    
+                       return
+                   }
+                   
+                   if let username = UserDefaults.standard.value(forKey: NewConstants.kUserName) as? String {
+                       do {
+                           let passwordItem = KeychainPasswordItem(service: KeychainConfig.serviceName, account: username, accessGroup: KeychainConfig.accessGroup)
+                           let password = try passwordItem.readPassword()
+                           self.authenticateUserWith(email: username, password: password)
+                       } catch let err {
+                        
+
+                           print("Error authenticating: \(err.localizedDescription)")
+                       }
+
+                   }
+            
+           // self.performSegue(withIdentifier: "homepageVC", sender: self)
+            AlertView.instance.showAlert(title: "Failure", message: "You are not logged into the system.", alertType: .failure)
+
+          self.removeHUD()
+
+               }
+
+    }
+    
+    
 }
 
-public extension UIDevice {
-    public var type: Model {
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let modelCode = withUnsafePointer(to: &systemInfo.machine) {
-            $0.withMemoryRebound(to: CChar.self, capacity: 1) {
-                ptr in String.init(validatingUTF8: ptr)
-                
-            }
+@available(iOS 13.0, *)
+
+extension SignInVC: ASAuthorizationControllerPresentationContextProviding {
+    
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+}
+}
+    
+extension SignInVC: ASAuthorizationControllerDelegate {
+
+  func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+    if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+      guard let nonce = currentNonce else {
+        fatalError("Invalid state: A login callback was received, but no login request was sent.")
+      }
+      guard let appleIDToken = appleIDCredential.identityToken else {
+        print("Unable to fetch identity token")
+        return
+      }
+      guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+        print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+        return
+      }
+      // Initialize a Firebase credential.
+      let credential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                idToken: idTokenString,
+                                                rawNonce: nonce)
+      // Sign in with Firebase.
+      Auth.auth().signIn(with: credential) { (authResult, error) in
+        if (error != nil) {
+          // Error. If error.code == .MissingOrInvalidNonce, make sure
+          // you're sending the SHA256-hashed nonce as a hex string with
+          // your request to Apple.
+            print(error?.localizedDescription)
+          return
         }
-        var modelMap : [ String : Model ] = [
-            "i386"      : .simulator,
-            "x86_64"    : .simulator,
-            //iPod
-            "iPod1,1"   : .iPod1,
-            "iPod2,1"   : .iPod2,
-            "iPod3,1"   : .iPod3,
-            "iPod4,1"   : .iPod4,
-            "iPod5,1"   : .iPod5,
-            //iPad
-            "iPad2,1"   : .iPad2,
-            "iPad2,2"   : .iPad2,
-            "iPad2,3"   : .iPad2,
-            "iPad2,4"   : .iPad2,
-            "iPad3,1"   : .iPad3,
-            "iPad3,2"   : .iPad3,
-            "iPad3,3"   : .iPad3,
-            "iPad3,4"   : .iPad4,
-            "iPad3,5"   : .iPad4,
-            "iPad3,6"   : .iPad4,
-            "iPad4,1"   : .iPadAir,
-            "iPad4,2"   : .iPadAir,
-            "iPad4,3"   : .iPadAir,
-            "iPad5,3"   : .iPadAir2,
-            "iPad5,4"   : .iPadAir2,
-            "iPad6,11"  : .iPad5, //aka iPad 2017
-            "iPad6,12"  : .iPad5,
-            "iPad7,5"   : .iPad6, //aka iPad 2018
-            "iPad7,6"   : .iPad6,
-            //iPad mini
-            "iPad2,5"   : .iPadMini,
-            "iPad2,6"   : .iPadMini,
-            "iPad2,7"   : .iPadMini,
-            "iPad4,4"   : .iPadMini2,
-            "iPad4,5"   : .iPadMini2,
-            "iPad4,6"   : .iPadMini2,
-            "iPad4,7"   : .iPadMini3,
-            "iPad4,8"   : .iPadMini3,
-            "iPad4,9"   : .iPadMini3,
-            "iPad5,1"   : .iPadMini4,
-            "iPad5,2"   : .iPadMini4,
-            //iPad pro
-            "iPad6,3"   : .iPadPro9_7,
-            "iPad6,4"   : .iPadPro9_7,
-            "iPad7,3"   : .iPadPro10_5,
-            "iPad7,4"   : .iPadPro10_5,
-            "iPad6,7"   : .iPadPro12_9,
-            "iPad6,8"   : .iPadPro12_9,
-            "iPad7,1"   : .iPadPro2_12_9,
-            "iPad7,2"   : .iPadPro2_12_9,
-            //iPhone
-            "iPhone3,1" : .iPhone4,
-            "iPhone3,2" : .iPhone4,
-            "iPhone3,3" : .iPhone4,
-            "iPhone4,1" : .iPhone4S,
-            "iPhone5,1" : .iPhone5,
-            "iPhone5,2" : .iPhone5,
-            "iPhone5,3" : .iPhone5C,
-            "iPhone5,4" : .iPhone5C,
-            "iPhone6,1" : .iPhone5S,
-            "iPhone6,2" : .iPhone5S,
-            "iPhone7,1" : .iPhone6plus,
-            "iPhone7,2" : .iPhone6,
-            "iPhone8,1" : .iPhone6S,
-            "iPhone8,2" : .iPhone6Splus,
-            "iPhone8,4" : .iPhoneSE,
-            "iPhone9,1" : .iPhone7,
-            "iPhone9,3" : .iPhone7,
-            "iPhone9,2" : .iPhone7plus,
-            "iPhone9,4" : .iPhone7plus,
-            "iPhone10,1" : .iPhone8,
-            "iPhone10,4" : .iPhone8,
-            "iPhone10,2" : .iPhone8plus,
-            "iPhone10,5" : .iPhone8plus,
-            "iPhone10,3" : .iPhoneX,
-            "iPhone10,6" : .iPhoneX,
-            "iPhone11,2" : .iPhoneXS,
-            "iPhone11,4" : .iPhoneXSMax,
-            "iPhone11,6" : .iPhoneXSMax,
-            "iPhone11,8" : .iPhoneXR,
-            //AppleTV
-            "AppleTV5,3" : .AppleTV,
-            "AppleTV6,2" : .AppleTV_4K
-        ]
+        // User is signed in to Firebase with Apple.
+        // ...
         
-        if let model = modelMap[String.init(validatingUTF8: modelCode!)!] {
-            if model == .simulator {
-                if let simModelCode = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] {
-                    if let simModel = modelMap[String.init(validatingUTF8: simModelCode)!] {
-                        return simModel
-                    }
+        self.performSegue(withIdentifier: "homepageVC", sender: nil)
+
+      }
+    }
+  }
+}
+
+  func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+    // Handle error.
+    print("Sign in with Apple errored: \(error)")
+  }
+
+public extension UIDevice {
+
+var type: Model {
+    var systemInfo = utsname()
+    uname(&systemInfo)
+    let modelCode = withUnsafePointer(to: &systemInfo.machine) {
+        $0.withMemoryRebound(to: CChar.self, capacity: 1) {
+            ptr in String.init(validatingUTF8: ptr)
+        }
+    }
+
+    let modelMap : [String: Model] = [
+
+        //Simulator
+        "i386"      : .simulator,
+        "x86_64"    : .simulator,
+
+        //iPod
+        "iPod1,1"   : .iPod1,
+        "iPod2,1"   : .iPod2,
+        "iPod3,1"   : .iPod3,
+        "iPod4,1"   : .iPod4,
+        "iPod5,1"   : .iPod5,
+
+        //iPad
+        "iPad2,1"   : .iPad2,
+        "iPad2,2"   : .iPad2,
+        "iPad2,3"   : .iPad2,
+        "iPad2,4"   : .iPad2,
+        "iPad3,1"   : .iPad3,
+        "iPad3,2"   : .iPad3,
+        "iPad3,3"   : .iPad3,
+        "iPad3,4"   : .iPad4,
+        "iPad3,5"   : .iPad4,
+        "iPad3,6"   : .iPad4,
+        "iPad6,11"  : .iPad5, //iPad 2017
+        "iPad6,12"  : .iPad5,
+        "iPad7,5"   : .iPad6, //iPad 2018
+        "iPad7,6"   : .iPad6,
+        "iPad7,11"  : .iPad7, //iPad 2019
+        "iPad7,12"  : .iPad7,
+        "iPad11,6"  : .iPad8, //iPad 2020
+        "iPad11,7"  : .iPad8,
+
+        //iPad Mini
+        "iPad2,5"   : .iPadMini,
+        "iPad2,6"   : .iPadMini,
+        "iPad2,7"   : .iPadMini,
+        "iPad4,4"   : .iPadMini2,
+        "iPad4,5"   : .iPadMini2,
+        "iPad4,6"   : .iPadMini2,
+        "iPad4,7"   : .iPadMini3,
+        "iPad4,8"   : .iPadMini3,
+        "iPad4,9"   : .iPadMini3,
+        "iPad5,1"   : .iPadMini4,
+        "iPad5,2"   : .iPadMini4,
+        "iPad11,1"  : .iPadMini5,
+        "iPad11,2"  : .iPadMini5,
+
+        //iPad Pro
+        "iPad6,3"   : .iPadPro9_7,
+        "iPad6,4"   : .iPadPro9_7,
+        "iPad7,3"   : .iPadPro10_5,
+        "iPad7,4"   : .iPadPro10_5,
+        "iPad6,7"   : .iPadPro12_9,
+        "iPad6,8"   : .iPadPro12_9,
+        "iPad7,1"   : .iPadPro2_12_9,
+        "iPad7,2"   : .iPadPro2_12_9,
+        "iPad8,1"   : .iPadPro11,
+        "iPad8,2"   : .iPadPro11,
+        "iPad8,3"   : .iPadPro11,
+        "iPad8,4"   : .iPadPro11,
+        "iPad8,9"   : .iPadPro2_11,
+        "iPad8,10"  : .iPadPro2_11,
+        "iPad8,5"   : .iPadPro3_12_9,
+        "iPad8,6"   : .iPadPro3_12_9,
+        "iPad8,7"   : .iPadPro3_12_9,
+        "iPad8,8"   : .iPadPro3_12_9,
+        "iPad8,11"  : .iPadPro4_12_9,
+        "iPad8,12"  : .iPadPro4_12_9,
+
+        //iPad Air
+        "iPad4,1"   : .iPadAir,
+        "iPad4,2"   : .iPadAir,
+        "iPad4,3"   : .iPadAir,
+        "iPad5,3"   : .iPadAir2,
+        "iPad5,4"   : .iPadAir2,
+        "iPad11,3"  : .iPadAir3,
+        "iPad11,4"  : .iPadAir3,
+        "iPad13,1"  : .iPadAir4,
+        "iPad13,2"  : .iPadAir4,
+        
+
+        //iPhone
+        "iPhone3,1" : .iPhone4,
+        "iPhone3,2" : .iPhone4,
+        "iPhone3,3" : .iPhone4,
+        "iPhone4,1" : .iPhone4S,
+        "iPhone5,1" : .iPhone5,
+        "iPhone5,2" : .iPhone5,
+        "iPhone5,3" : .iPhone5C,
+        "iPhone5,4" : .iPhone5C,
+        "iPhone6,1" : .iPhone5S,
+        "iPhone6,2" : .iPhone5S,
+        "iPhone7,1" : .iPhone6Plus,
+        "iPhone7,2" : .iPhone6,
+        "iPhone8,1" : .iPhone6S,
+        "iPhone8,2" : .iPhone6SPlus,
+        "iPhone8,4" : .iPhoneSE,
+        "iPhone9,1" : .iPhone7,
+        "iPhone9,3" : .iPhone7,
+        "iPhone9,2" : .iPhone7Plus,
+        "iPhone9,4" : .iPhone7Plus,
+        "iPhone10,1" : .iPhone8,
+        "iPhone10,4" : .iPhone8,
+        "iPhone10,2" : .iPhone8Plus,
+        "iPhone10,5" : .iPhone8Plus,
+        "iPhone10,3" : .iPhoneX,
+        "iPhone10,6" : .iPhoneX,
+        "iPhone11,2" : .iPhoneXS,
+        "iPhone11,4" : .iPhoneXSMax,
+        "iPhone11,6" : .iPhoneXSMax,
+        "iPhone11,8" : .iPhoneXR,
+        "iPhone12,1" : .iPhone11,
+        "iPhone12,3" : .iPhone11Pro,
+        "iPhone12,5" : .iPhone11ProMax,
+        "iPhone12,8" : .iPhoneSE2,
+        "iPhone13,1" : .iPhone12Mini,
+        "iPhone13,2" : .iPhone12,
+        "iPhone13,3" : .iPhone12Pro,
+        "iPhone13,4" : .iPhone12ProMax,
+
+        //Apple TV
+        "AppleTV5,3" : .AppleTV,
+        "AppleTV6,2" : .AppleTV_4K
+    ]
+
+    if let model = modelMap[String.init(validatingUTF8: modelCode!)!] {
+        if model == .simulator {
+            if let simModelCode = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] {
+                if let simModel = modelMap[String.init(validatingUTF8: simModelCode)!] {
+                    return simModel
                 }
             }
-            return model
         }
-        return Model.unrecognized
+        return model
     }
+    return Model.unrecognized
+  }
 }
+
+

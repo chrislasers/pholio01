@@ -19,7 +19,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             let toId = user?.userId
             Database.database().reference().child("Users").child(toId!).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String: AnyObject] {
-                    self.navigationItem.title = dictionary["Usertype"] as? String
+                    self.navigationItem.title = dictionary["Username"] as? String
                 }
             }, withCancel: nil)
 
@@ -76,7 +76,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     lazy var inputTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Enter message..."
+        textField.attributedPlaceholder =  NSAttributedString(string: "Send Message...",attributes: [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)])
+        textField.textColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.delegate = self
         return textField
@@ -256,7 +257,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     lazy var inputContainerView: UIView = {
         let containerView = UIView()
-        containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
+        containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 70)
         containerView.backgroundColor = UIColor.white
         
         let uploadImageView = UIImageView()
@@ -318,6 +319,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     private func sendMessageWithProperties(properties: [String: Any]) {
         let ref = Database.database().reference().child("messages")
+        let refref = Database.database().reference().child("mess")
+
         let childRef = ref.childByAutoId()
         //is it there best thing to include the name inside of the message node
         // let profileImageUrl = user!.profileImageUrl
@@ -338,6 +341,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 return
             }
             
+
             
             self.inputTextField.text = nil
             
@@ -345,6 +349,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             
             let messageId = childRef.key
             userMessagesRef.updateChildValues([messageId!: 1])
+            
+            refref.child(toId).child(fromId).updateChildValues([messageId!: 1])
+
             
             let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toId).child(fromId)
             recipientUserMessagesRef.updateChildValues([messageId!: 1])

@@ -18,7 +18,15 @@ class UserModel: NSObject {
     
     var userProfilePicDictionary: [String: Any]?
     var profileImageUrl: String?
+    
+    var profileImageURL: String?
+    
+    
+
     var username: String?
+    var Usertype: String?
+
+    
     var items = [[String: Any]]()
     var itemsConverted = [[String: String]]()
     
@@ -29,6 +37,7 @@ class UserModel: NSObject {
     var text: String?
     var timestamp: NSNumber?
     var toId: String?
+    var url:String?
     
     var genderFilter: GenderFilter!
     var pairingFilter: PairingFilter!
@@ -46,7 +55,6 @@ class UserModel: NSObject {
     
     var name: String?
     var profession: String?
-    //    let imageNames: [String]
     var imageUrl1: String?
     var imageUrl2: String?
     var imageUrl3: String?
@@ -54,15 +62,35 @@ class UserModel: NSObject {
     
     var UserGallery: String?
     
+    var hourlyrate: String?
+    
+    
+    var ageTextfield: String?
+    var hrTextfield: String?
+    var bioTextfield: String?
+
+    
     
     
     init(withUserId userId: String, dictionary: [String: Any]) {
         self.uid = userId
         
+        self.url = dictionary["User-Gallery"] as? String
+        
         self.userId = userId
         
+        self.hourlyrate = dictionary["hourlyrate"] as? String
+        
+        
+        self.ageTextfield = dictionary["ageTextfield"] as? String ?? ""
+        self.hrTextfield = dictionary["hrTextfield"] as? String ?? ""
+        self.bioTextfield = dictionary["bioTextfield"] as? String ?? ""
 
         
+        self.username = dictionary["Username"] as? String
+
+        self.profileImageURL = dictionary["profileImageURL"] as? String
+
         //self.email = userEmail
         
         self.age = dictionary["age"] as? Int
@@ -203,9 +231,12 @@ class UserModel: NSObject {
     
     
     
-    init(userEmail: String, userId: String) {
+    init(userEmail: String, userId: String, username: String, profileImageURL: String) {
         self.email = userEmail
         self.userId = userId
+        self.username = username
+         self.profileImageURL = profileImageURL
+        
     }
     
     static let system = FriendSystem()
@@ -243,16 +274,24 @@ class UserModel: NSObject {
     func getCurrentUser(_ completion: @escaping (UserModel) -> Void) {
         CURRENT_USER_REF.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             let email = snapshot.childSnapshot(forPath: "email").value as! String
+            let username = snapshot.childSnapshot(forPath: "username").value as! String
+            let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as! String
+
+
             let id = snapshot.key
-            completion(UserModel(userEmail: email, userId: id))
+            completion(UserModel(userEmail: email, userId: id, username: username, profileImageURL: profileImageURL))
         })
     }
     /** Gets the User object for the specified user id */
     func getUser(_ userID: String, completion: @escaping (UserModel) -> Void) {
         USER_REF.child(userID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             let email = snapshot.childSnapshot(forPath: "email").value as! String
+            let username = snapshot.childSnapshot(forPath: "username").value as! String
+            let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as! String
+
+
             let id = snapshot.key
-            completion(UserModel(userEmail: email, userId: id))
+            completion(UserModel(userEmail: email, userId: id, username: username, profileImageURL: profileImageURL))
         })
     }
     
@@ -359,8 +398,14 @@ class UserModel: NSObject {
             self.userList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let email = child.childSnapshot(forPath: "email").value as! String
+                let username = snapshot.childSnapshot(forPath: "username").value as! String
+                
+                let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as! String
+
+                let id = snapshot.key
+
                 if email != Auth.auth().currentUser?.email! {
-                    self.userList.append(UserModel(userEmail: email, userId: self.userId!))
+                    self.userList.append(UserModel(userEmail: email, userId: id, username: username, profileImageURL: profileImageURL))
                 }
             }
             update()

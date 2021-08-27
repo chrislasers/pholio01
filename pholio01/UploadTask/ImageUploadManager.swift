@@ -46,6 +46,8 @@ class ImageUploadManager: NSObject {
         if let imageData =  image.jpegData(compressionQuality: 1.0)  {
             let metadata = StorageMetadata()
             metadata.contentType = "image/jpeg"
+            
+            
             let uploadTask = imagesReference.putData(imageData, metadata: metadata, completion: { (metadata, error) in
                 guard metadata != nil else {
                     completionBlock(nil, "Error occured")

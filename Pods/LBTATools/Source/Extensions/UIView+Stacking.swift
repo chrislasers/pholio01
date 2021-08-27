@@ -8,6 +8,7 @@
 
 import UIKit
 
+@available(iOS 9.0, *)
 extension UIView {
     
     fileprivate func _stack(_ axis: NSLayoutConstraint.Axis = .vertical, views: [UIView], spacing: CGFloat = 0, alignment: UIStackView.Alignment = .fill, distribution: UIStackView.Distribution = .fill) -> UIStackView {
@@ -54,10 +55,10 @@ extension UIView {
     }
     
     @discardableResult
-    func withBorder(width: CGFloat, color: UIColor) -> UIView {
+    func withBorder<T: UIView>(width: CGFloat, color: UIColor) -> T {
         layer.borderWidth = width
         layer.borderColor = color.cgColor
-        return self
+        return self as! T
     }
 }
 

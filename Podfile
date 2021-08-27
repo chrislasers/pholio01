@@ -1,5 +1,7 @@
+
+
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '11.0'
+# platform :ios, '13.6'
 
 
 
@@ -10,7 +12,7 @@ target 'pholio01' do
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '11.0'
+platform :ios, '13.6'
 
   # Pods for pholio01
 
@@ -59,7 +61,7 @@ platform :ios, '11.0'
 
 	pod 'Firebase/Messaging'
 
-	pod "BSImagePicker"
+	pod "BSImagePicker", "~> 2.4"
 	
 	pod 'Fusuma'
 
@@ -68,8 +70,6 @@ platform :ios, '11.0'
 	pod 'UICircularProgressRing'
 
 	pod 'InstagramLogin'
-
-	pod 'YPImagePicker'
  
 	pod 'Kingfisher'
 
@@ -78,6 +78,14 @@ platform :ios, '11.0'
 	pod 'CircleMenu'
 
 	pod 'LBTATools'
+
+	pod "ViewAnimator", "~> 2.7.1"
+  
+	pod 'OpalImagePicker'
+
+	pod 'lottie-ios'
+
+	pod 'NVActivityIndicatorView'
 
 end
 

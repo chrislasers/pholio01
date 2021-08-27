@@ -114,13 +114,13 @@ public class CTBottomSlideController : NSObject, UIGestureRecognizerDelegate
         
         self.bottomView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.topConstraint = NSLayoutConstraint(item: self.bottomView, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view,
+        self.topConstraint = NSLayoutConstraint(item: self.bottomView as Any, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view,
                                                 attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: 0)
-        let startConstraint = NSLayoutConstraint(item: self.bottomView, attribute: NSLayoutConstraint.Attribute.leading, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view,
+        let startConstraint = NSLayoutConstraint(item: self.bottomView as Any, attribute: NSLayoutConstraint.Attribute.leading, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view,
                                                  attribute: NSLayoutConstraint.Attribute.leading, multiplier: 1, constant: 0)
-        let endConstraint = NSLayoutConstraint(item: self.bottomView, attribute: NSLayoutConstraint.Attribute.trailing, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view,
+        let endConstraint = NSLayoutConstraint(item: self.bottomView as Any, attribute: NSLayoutConstraint.Attribute.trailing, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view,
                                                attribute: NSLayoutConstraint.Attribute.trailing, multiplier: 1, constant: 0)
-        self.heightConstraint = NSLayoutConstraint(item: self.bottomView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil,
+        self.heightConstraint = NSLayoutConstraint(item: self.bottomView as Any, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil,
                                                    attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: view.frame.height)
         
         

@@ -42,13 +42,8 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     @IBOutlet weak var username: UITextField!
     
-    @IBOutlet weak var stackView: UIStackView!
-    
-    
-    
     @IBOutlet weak var signUpButton: UIButton!
-    
-    
+
     @IBOutlet weak var usernameValid: UILabel!
     
     
@@ -73,7 +68,7 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     override func viewDidLoad() {
         
-        
+        super.viewDidLoad()
         
         
         Auth.auth().addStateDidChangeListener { (auth, user) in
@@ -105,17 +100,19 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         
         
         let tf = CustomTextField(padding: 24, height: 44)
-        
         tf.layer.cornerRadius =  tf.height / 2
-        
         tf.placeholder = "Enter Username"
         tf.backgroundColor = .white
         username.keyboardType = .default
-        
-        
         username.placeholder = "Enter Username"
         
-        super.viewDidLoad()
+        
+        self.profileImageView.layer.cornerRadius = self.profileImageView.frame.size.height / 2;
+        self.profileImageView.layer.borderColor = UIColor.white.cgColor
+        self.profileImageView.layer.borderWidth = 0.5
+        self.profileImageView.clipsToBounds = true
+        profileImageView.contentMode = .scaleAspectFill
+        
         
         
         let button = UIButton(type: .custom)
@@ -149,19 +146,14 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         signUpButton.layer.shadowOpacity = 0.5
         signUpButton.layer.shadowOffset = CGSize(width: 1, height: 1)
         
-          stackView.frame = CGRect(x: 50, y: 660, width: view.frame.width - 105, height: 60)
         
         
         let db = Firestore.firestore()
         let settings = db.settings
-        settings.areTimestampsInSnapshotsEnabled = true
+      //  settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
         
         checkPermission()
-        
-        layoutProfile()
-       layoutChangePicButton()
-        
         
         configureTextFields()
         ref = Database.database().reference()
@@ -274,7 +266,7 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        username.becomeFirstResponder
+        username.becomeFirstResponder()
         
         
         
@@ -300,14 +292,7 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
             
             UIColor(red: 123/255, green: 31/255, blue: 162/255, alpha: 1.0),
             
-            
-            
             UIColor(red: 50/255, green: 157/255, blue: 240/255, alpha: 1.0)])
-        
-        //   UIColor(red: 90/255, green: 120/255, blue: 127/255, alpha: 1.0),
-        
-        
-        //  UIColor(red: 58/255, green: 255/255, blue: 217/255, alpha: 1.0)])
         
         pastelView.startAnimation()
         view.insertSubview(pastelView, at: 1)
@@ -517,6 +502,8 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         
         let userReference = self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("UserPro-Pic")
         
+         let UserReference = self.ref.child("users").child((Auth.auth().currentUser?.uid)!)
+        
         let uploadMetaData = StorageMetadata()
         uploadMetaData.contentType = "image/jpeg"
         
@@ -535,8 +522,12 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
                         let profileImageURL = downloadUrl.absoluteString
                         userReference.setValue(["profileImageURL": profileImageURL])
                         
+                        UserReference.updateChildValues(["profileImageURL": profileImageURL])
+                        
                         let uid = Auth.auth().currentUser?.uid ?? ""
                         let docData = ["uid": uid, "profileImageURL": profileImageURL]
+                        
+                        
                         Firestore.firestore().collection("users").document(uid).setData(docData) { (err) in
                             if let err = err {
                                 print(err)
@@ -557,45 +548,6 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
             
         }
     }
-    }
-
-    
-    private func layoutProfile () {
-        view.addSubview(profileImageView)
-        if #available(iOS 11.0, *) {
-            NSLayoutConstraint.activate([
-                //An array of layout constraints
-                profileImageView.widthAnchor.constraint(equalToConstant: 120),
-                profileImageView.heightAnchor.constraint(equalToConstant: 120),
-                profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                //Prevent "Safe Area" in iPhone X
-                profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20)
-                ])
-        } else {
-            // Fallback on earlier versions
-        }
-        profileImageView.layer.cornerRadius = 60
-        profileImageView.layer.masksToBounds = true
-        //Now user need to tap to the profile image => choose image
-        profileImageView.isUserInteractionEnabled = true
-        profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self,
-                                                                     action: #selector(pressToChangePic(_:))))
-    }
-    
-    private func layoutChangePicButton() {
-        view.addSubview(tapToChangePic)
-        if #available(iOS 11.0, *) {
-            NSLayoutConstraint.activate([
-                //An array of layout constraints
-                tapToChangePic.widthAnchor.constraint(equalToConstant: 165),
-                tapToChangePic.heightAnchor.constraint(equalToConstant: 120),
-                tapToChangePic.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                //Prevent "Safe Area" in iPhone X
-                tapToChangePic.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150)
-                ])
-        } else {
-            // Fallback on earlier versions
-        }
     }
     
     func checkPermission() {
@@ -619,6 +571,8 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         case .denied:
             // same same
             print("User has denied the permission.")
+         default:
+            fatalError()
         }
     }
     
@@ -627,21 +581,33 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     @IBAction func registerPressed(_ sender: AnyObject) {
         
         validator.validate(self)
+    
         
         
-        guard let username = username.text else {return}
+        guard let username = username.text else {
+            
+            let loginAlert = UIAlertController(title: "Login Error", message: " Please Provide Valid Username", preferredStyle: .alert)
+            loginAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(loginAlert, animated: true, completion: nil)
+            return
+            
+        }
         
-        guard let image = profileImageView.image?.jpegData(compressionQuality: 0.7)   else { return }
+        guard let image = profileImageView.image?.jpegData(compressionQuality: 0.7)   else {
+            
+            
+            let loginAlert = UIAlertController(title: "Login Error", message: " Please Add Profile Picture", preferredStyle: .alert)
+            loginAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(loginAlert, animated: true, completion: nil)
+            
+            return }
         
-        let img = UIImage(named: "user")
 
-        if self.profileImageView?.image != img   {
+        if self.profileImageView?.image != nil   {
+            
+            print("Image1")
             //Now check if the img has changed or not:
             
-            
-         
-            
-    
             let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
             changeRequest?.displayName = username
             changeRequest?.commitChanges { error in
@@ -649,36 +615,24 @@ class UpdateVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
                 if error == nil {
                     
                     self.uploadProfileImage(imageData: image) // upload image from here
-                    
-                    
                     self.performSegue(withIdentifier: "toGallery", sender: self)
-                    
-                  //  let settingsController = SettingsController()
-                    //settingsController.delegate = self
-                   // let navController = UINavigationController(rootViewController: settingsController)
-                  //  self.present(navController, animated: true)
-                    
                     
                     self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Username": self.username.text!])
                     
+                     self.ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["username": self.username.text!])
                     print("User display changed")
                     
                 } else {
-                    
-                    let loginAlert = UIAlertController(title: "Login Error", message: " Please Provide Valid Username", preferredStyle: .alert)
-                    loginAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self.present(loginAlert, animated: true, completion: nil)
-                    
+                    print(error as Any)
                 }
-                
+                print("Image3")
             }
-            
         } else {
             
-            let loginAlert = UIAlertController(title: "Login Error", message: " Please Add Profile Picture", preferredStyle: .alert)
-            loginAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(loginAlert, animated: true, completion: nil)
+            print("Image4")
+
         }
+        print("Image5")
     }
 }
 

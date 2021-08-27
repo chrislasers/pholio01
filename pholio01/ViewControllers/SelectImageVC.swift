@@ -18,6 +18,10 @@ import FirebaseFirestore
 import Alamofire
 import FirebaseCore
 import BSImagePicker
+import JGProgressHUD
+import Pastel
+
+
 
 
 
@@ -124,6 +128,33 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
         pickImageBTN.layer.shadowOffset = CGSize(width: 1, height: 1)
         
         
+        let pastelView = PastelView(frame: view.bounds)
+
+        //MARK: -  Custom Direction
+        pastelView.startPastelPoint = .bottomLeft
+        pastelView.endPastelPoint = .topRight
+
+        //MARK: -  Custom Duration
+
+        pastelView.animationDuration = 3.00
+
+        //MARK: -  Custom Color
+        pastelView.setColors([
+
+            UIColor(red: 255/255, green: 64/255, blue: 129/255, alpha: 1.0),
+
+
+            UIColor(red: 123/255, green: 31/255, blue: 162/255, alpha: 1.0),
+
+
+
+        UIColor(red: 50/255, green: 157/255, blue: 240/255, alpha: 1.0)])
+
+        pastelView.startAnimation()
+        view.insertSubview(pastelView, at: 1)
+        
+        
+        
         
         // pickImageBTN.frame = CGRect(x: 300, y: 100, width: 50, height: 50)
         
@@ -197,7 +228,8 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
     
     @IBAction func savePressed(_ sender: Any) {
         
-        guard uploadImagePresenter.images.count > 0, let images = uploadImagePresenter.images as? [UIImage] else
+        
+        guard uploadImagePresenter.images.count > 1, let images = uploadImagePresenter.images as? [UIImage] else
             
         {
             print("No Image Selected")
@@ -216,7 +248,7 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
         self.postToken(Token: token)
 
         
-performSegue(withIdentifier: "toAddPhoto", sender: self)
+       performSegue(withIdentifier: "toAddPhoto", sender: self)
        uploadPresenter.createCar(with: images)
        
     }
@@ -253,41 +285,150 @@ performSegue(withIdentifier: "toAddPhoto", sender: self)
         pageControl.currentPage = uploadImagePresenter.images.count-1
     }
     
+    @objc func getAllImg() -> Void
+        {
+            DispatchQueue.main.async {
+                // Update UI
+            
+                if self.SelectedAssets.count != 0{
+                    for i in 0..<self.SelectedAssets.count{
+    //                let manager = PHImageManager.default()
+                    let option = PHImageRequestOptions()
+                        
+                    var thumbnail = UIImage()
+                        
+                        option.isSynchronous = true
+                        //option.deliveryMode = .highQualityFormat
+                        option.resizeMode = .fast
+                    
+                        
+
+
+                        PHCachingImageManager.default().requestImage(for: self.SelectedAssets[i], targetSize:CGSize(width: 700, height: 700), contentMode: .aspectFill, options: option, resultHandler: {(result, info)->Void in
+                            
+                            // Cuts off at thumbnail...fix NOW!!
+                            if result == nil {
+                                
+                            //self.dismiss(animated: true, completion: nil)
+                                
+                                let emailNotSentAlert = UIAlertController(title: "Please Try Again", message: "One Or More Photos Not Saved", preferredStyle: .alert)
+                                   emailNotSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                                  self.present(emailNotSentAlert, animated: true, completion: nil)
+                                
+                                
+                                print("Photos Not Acquired")
+                                
+                            } else {
+
+                            thumbnail = result!
+                                
+
+                                    self.userSelectedimage(thumbnail)
+                                self.PhotoArray.append(thumbnail)
+                            }
+                            
+                    })
+                    
+                        
+                }
+            }
+                self.collectionView.reloadData()
+            }
+        }
+    
+    
     
     
     @IBAction func selectImage(_ sender: Any) {
         
         
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.allowsEditing = true
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
+        let allAssets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: nil)
+               var evenAssets = [PHAsset]()
+
+               allAssets.enumerateObjects({ (asset, idx, stop) -> Void in
+                   if idx % 2 == 0 {
+                       evenAssets.append(asset)
+
+
+                   }
+               })
+
+        // create an instance
+        let imagePicker = BSImagePickerViewController()
         
+        imagePicker.maxNumberOfSelections = 5
+
+
+
         
+
+            self.SelectedAssets.removeAll()
+
+             let start = Date()
+             self.bs_presentImagePickerController(imagePicker, animated: true, select: { (asset) in
+
+
+                print("Selected: \(asset)")
+
+             }, deselect: { (asset) in
+
+
+
+                 print("Deselected: \(asset)")
+
+             }, cancel: { (assets) in
+
+
+
+                 print("Canceled with selections: \(assets)")
+
+             }, finish: { (assets) in
+
+
+                for i in 0..<assets.count
+                          {
+                              self.SelectedAssets.append(assets[i])
+
+                          }
+
+                          self.getAllImg()
+
+
+                 print("Finished with selections: \(assets)")
+             }, completion: {
+                 let finish = Date()
+                 print(finish.timeIntervalSince(start))
+
+
+             })
     }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true, completion: nil)    }
+
     
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+picker.dismiss(animated: true, completion: nil)    }
+    
+    
+   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         if PHPhotoLibrary.authorizationStatus() != PHAuthorizationStatus.authorized {
             PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) in
-                
-            })
-        } else {
             
-            if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            })
+            } else {
+            
+            if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
                 
-                userSelectedimage(image)
+               userSelectedimage(image)
             }
             picker.dismiss(animated: true, completion: nil)
-            
+
         }
-    }
+}
     
 }
+
+
+
 
 

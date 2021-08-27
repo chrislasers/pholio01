@@ -13,12 +13,22 @@ import FirebaseAuth
 import Firebase
 import FirebaseStorage
 import Pastel
+import MapKit
+import CoreLocation
+import GeoFire
 
 
-class PairWithVC: UIViewController {
+class PairWithVC: UIViewController, CLLocationManagerDelegate {
     
     
     var ref: DatabaseReference!
+    
+    var locationManager = CLLocationManager()
+      var currentLocation: CLLocation!
+      
+
+      var geoFireRef: DatabaseReference?
+      var geoFire: GeoFire!
     
     let userID = Auth.auth().currentUser?.uid
     let Photographer: String = "Photographer"
@@ -26,10 +36,15 @@ class PairWithVC: UIViewController {
     let Guest: String = "Guest"
     let Man: String = "Man"
     let Woman: String = "Woman"
+    let Models: String = "Finished"
+
     
     @IBOutlet weak var firstPair: UIButton!
     
     @IBOutlet weak var secondPair: UIButton!
+    
+    @IBOutlet weak var map: MKMapView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,11 +115,21 @@ class PairWithVC: UIViewController {
         
         
        
-    
-        
-        
-        
-        
+        map.isHidden = true
+           map.showsUserLocation = true
+           
+           map.delegate = self as? MKMapViewDelegate
+           
+           locationManager = CLLocationManager()
+           locationManager.delegate = self
+           locationManager.desiredAccuracy = kCLLocationAccuracyBest
+           locationManager.requestWhenInUseAuthorization()
+           locationManager.startUpdatingLocation()
+           
+           geoFireRef = Database.database().reference()
+           
+           geoFire = GeoFire(firebaseRef: (geoFireRef!.child("user_locations")))
+
         
         ref =
             Database.database().reference()
@@ -123,9 +148,6 @@ class PairWithVC: UIViewController {
                 // ...
             }
         }
-        
-        
-        
     }
     
     override func didReceiveMemoryWarning() {
@@ -135,9 +157,6 @@ class PairWithVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        
-        
      
         let pastelView = PastelView(frame: view.bounds)
         
@@ -172,6 +191,62 @@ class PairWithVC: UIViewController {
         
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+    
+        locationManager.stopUpdatingLocation()
+        
+    }
+    
+    func locationAuthStatus() {
+           
+           if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+               
+               
+               
+               currentLocation = locationManager.location
+               
+               print(currentLocation.coordinate.longitude)
+               print(currentLocation.coordinate.latitude)
+               
+               
+           } else {
+               locationManager.requestWhenInUseAuthorization()
+               locationAuthStatus()
+           }
+       }
+       
+       func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+           print("Error")
+       }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+           
+           let location = locations[0]
+           
+           let spanz:MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+           
+           let myLocation:CLLocationCoordinate2D = CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)
+           
+           let region:MKCoordinateRegion = MKCoordinateRegion(center: myLocation,span: spanz)
+           
+           map.setRegion(region, animated: true)
+           
+           guard locations.last != nil else { return }
+           geoFire!.setLocation(location, forKey: (Auth.auth().currentUser?.uid)!)
+           
+           let locationRef = Database.database().reference().child("Users").child(Auth.auth().currentUser!.uid)
+           locationRef.child("lat_lon").setValue("\(location.coordinate.latitude)_\(location.coordinate.longitude)")
+           
+           print(location.coordinate)
+           
+           self.map.showsUserLocation = true
+           
+           
+       }
+       
+      
+    
     @objc func fbButtonPressed() {
         
         dismiss(animated: true, completion: nil)
@@ -190,16 +265,38 @@ class PairWithVC: UIViewController {
     
     
     @IBAction func pPressed(_ sender: Any) {
+        
+        
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Pairing With": Photographer])
+        
+        
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["PairingFilter": PairingFilter.photographer.rawValue])
         
+        
         self.performSegue(withIdentifier: "toEditProfile", sender: nil)
+        
+        
+              let childupdates: [String: Any] = [
+                  "/Yes": Models,
+          ]
+        
+        let userRef = ref.child("Users").child(Auth.auth().currentUser!.uid)
+        userRef.updateChildValues(childupdates)
     }
     
     @IBAction func mPressed(_ sender: Any) {
+        
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Pairing With": Model])
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["PairingFilter": PairingFilter.model.rawValue])
         self.performSegue(withIdentifier: "toEditProfile", sender: nil)
+        
+        
+              let childupdates: [String: Any] = [
+                  "/Yes": Models,
+          ]
+        
+        let userRef = ref.child("Users").child(Auth.auth().currentUser!.uid)
+        userRef.updateChildValues(childupdates)
     }
     
     

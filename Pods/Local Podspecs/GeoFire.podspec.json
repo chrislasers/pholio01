@@ -1,6 +1,6 @@
 {
   "name": "GeoFire",
-  "version": "3.0.0",
+  "version": "4.0.2",
   "summary": "Realtime location queries with Firebase.",
   "homepage": "https://github.com/firebase/geofire-objc",
   "license": {
@@ -9,7 +9,8 @@
   },
   "authors": "Firebase",
   "source": {
-    "git": "https://github.com/firebase/geofire-objc.git"
+    "git": "https://github.com/firebase/geofire-objc.git",
+    "tag": "v4.0.2"
   },
   "source_files": "GeoFire/**/*.{h,m}",
   "documentation_url": "https://geofire-ios.firebaseapp.com/docs/",
@@ -19,11 +20,27 @@
   "ios": {
     "dependencies": {
       "Firebase/Database": [
-        "~> 5.0"
+        "~> 6.0"
       ]
     }
   },
-  "frameworks": "CoreLocation",
+  "frameworks": [
+    "CoreLocation",
+    "FirebaseDatabase"
+  ],
   "requires_arc": true,
-  "static_framework": true
+  "static_framework": true,
+  "subspecs": [
+    {
+      "name": "Utils",
+      "source_files": [
+        "GeoFire/**/GFUtils*.[mh]",
+        "GeoFire/**/GFGeoQueryBounds*.[mh]",
+        "GeoFire/**/GFGeoHashQuery*.[mh]",
+        "GeoFire/**/GFGeoHash*.[mh]",
+        "GeoFire/**/GFBase32Utils*.[mh]"
+      ],
+      "frameworks": "CoreLocation"
+    }
+  ]
 }

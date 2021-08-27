@@ -14,6 +14,8 @@ import Cosmos
 import Firebase
 import FirebaseAuth
 import Kingfisher
+import SwiftUI
+import Lottie
 
 class PreViewController: UIViewController, SegmentedProgressBarDelegate {
     
@@ -21,45 +23,83 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
     @IBOutlet weak var imagePreview: UIImageView!
     @IBOutlet weak var userProfileImage: UIImageView!
     @IBOutlet var thumbImageView: UIImageView!
+    @IBOutlet var popOver: UIView!
+
     
     @IBOutlet var userGender: UILabel!
     @IBOutlet var userAge: UILabel!
     @IBOutlet var userHR: UILabel!
-    
     @IBOutlet weak var lblUserName: UILabel!
-    
-    
-    @IBOutlet var popOver: UIView!
-    
     
     @IBOutlet var tableView: UITableView!
     
+    @IBOutlet weak var instaBTN: UIButton!
+    @IBOutlet weak var fbBTN: UIButton!
+    
+    
+    
+    
+    let visualEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .light)
+        let view = UIVisualEffectView(effect: blurEffect)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     
     @IBAction func menuBTN(_ sender: Any) {
-        
+//
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let ProfileVC = storyboard.instantiateViewController(withIdentifier: "ProfileVC")
+//
+//        self.present(ProfileVC, animated: true, completion: nil)
         
         UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 1.0,initialSpringVelocity: 5, options: [], //options: nil
             animations: ({
-                
+
+                self.visualEffectView.alpha = 0.9
                 self.view.addSubview(self.popOver)
-                
-                
                 self.popOver.center.y = self.view.frame.width / 3
-                
+
+                self.popOver.center = self.view.center
+
+
             }), completion: nil)
+    }
+    
+    @IBAction func instagramBTN(_ sender: Any) {
         
-        
-        
-        self.view.addSubview(popOver)
-        
-        
-        
-        popOver.center = self.view.center
+        let animation = CABasicAnimation(keyPath: "position")
+        animation.duration = 0.07
+        animation.repeatCount = 4
+        animation.autoreverses = true
+        animation.fromValue = NSValue(cgPoint: CGPoint(x: self.instaBTN.center.x - 10, y: instaBTN.center.y))
+        animation.toValue = NSValue(cgPoint: CGPoint(x: instaBTN.center.x + 10, y: instaBTN.center.y))
+        instaBTN.layer.add(animation, forKey: "position")
         
     }
     
     
+    @IBAction func facebookBTN(_ sender: Any) {
+        
+        
+        let animation = CABasicAnimation(keyPath: "position")
+        animation.duration = 0.07
+        animation.repeatCount = 4
+        animation.autoreverses = true
+        animation.fromValue = NSValue(cgPoint: CGPoint(x: self.fbBTN.center.x - 10, y: fbBTN.center.y))
+        animation.toValue = NSValue(cgPoint: CGPoint(x: fbBTN.center.x + 10, y: fbBTN.center.y))
+        fbBTN.layer.add(animation, forKey: "position")
+        
+        
+    }
     
+    
+
+    
+    
+    var animationView: AnimationView?
+
     
     var pageIndex : Int = 0
     var items = [[String: Any]]()
@@ -100,21 +140,17 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
     
     @IBOutlet var cosmosView: CosmosView!
     
-    
-    
-    
-    
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //cosmosView.settings.updateOnTouch = true
-        
+        cosmosView.settings.updateOnTouch = true
         
         Auth.auth().addStateDidChangeListener { (auth, user) in
             
             if Auth.auth().currentUser != nil
             {
-                print("User Signed Into Swipe Mode")
+                print("Signed Into PreviewController")
                 //self.performSegue(withIdentifier: "homepageVC", sender: nil)    }
                 
             }  else {
@@ -125,7 +161,13 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         }
         
         
+        view.addSubview(visualEffectView)
+        visualEffectView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        visualEffectView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         
+        visualEffectView.alpha = 0
         
         
         popOver.layer.borderColor = UIColor.white.withAlphaComponent(0.12).cgColor
@@ -143,46 +185,25 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         
         ref = Database.database().reference()
         
-        
-        
-        
-        
-        self.userProfileImage.layer.cornerRadius = self.userProfileImage.frame.size.height / 2;
-        //userProfileImage.image = UIImage(named: items[pageIndex]["pro-image"] as! String)
-        
         let user = usersArray[pageIndex]
         
-        let imageUrl = URL(string: user.profileImageUrl!)!
-        self.userProfileImage.kf.indicatorType = .activity
-        self.userProfileImage.kf.setImage(with: imageUrl)
-        
-        self.lblUserName.text = user.username
-        self.userGender.text = user.userType
-        self.userAge.text = String(user.age)
-        self.userHR.text = String(user.hourlyRate)
-        
-        /*
-         DispatchQueue.global(qos: .background).async {
-         let imageData = NSData(contentsOf: URL(string: user.profileImageUrl!)!)
-         
-         DispatchQueue.main.async {
-         let profileImage = UIImage(data: imageData! as Data)
-         self.userProfileImage.image = profileImage
-         self.lblUserName.text = user.username
-         self.userGender.text = user.userType
-         self.userAge.text = String(user.age)
-         self.userHR.text = String(user.hourlyRate)
-         
-         
-         ImageService.getImage(withURL: URL(string: user.profileImageUrl!)!) { image in
-         self.userProfileImage.image = profileImage
-         }
+            self.userProfileImage.layer.cornerRadius = self.userProfileImage.frame.size.height / 2;
+            //userProfileImage.image = UIImage(named: items[pageIndex]["pro-image"] as! String)
+            
+            
+            let imageUrl = URL(string: user.profileImageUrl!)!
+            self.userProfileImage.kf.indicatorType = .activity
+            self.userProfileImage.kf.setImage(with: imageUrl)
+           
+
+            
+            self.lblUserName.text = user.username
+            self.userGender.text = String(user.userType)
+           self.userAge.text = String(user.age)
+            self.userHR.text = String(user.hourlyRate)
          
          
          
-         }
-         }
-         */
         
         //item = self.items[pageIndex]["items"] as! [[String : String]]
         item = user.itemsConverted
@@ -202,8 +223,8 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         SPB.padding = 2
         SPB.isPaused = true
         SPB.currentAnimationIndex = 0
-        view.addSubview(SPB)
-        view.bringSubviewToFront(SPB)
+        //view.addSubview(SPB)
+       // view.bringSubviewToFront(SPB)
         
         let tapGestureImage = UITapGestureRecognizer(target: self, action: #selector(self.tapOn(_:)))
         tapGestureImage.numberOfTapsRequired = 1
@@ -235,8 +256,6 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         })
     }
     
-    
-    
     @objc func wasDragged(gestureRecognizer: UIPanGestureRecognizer) {
         let labelPoint = gestureRecognizer.translation(in: view)
         imagePreview.center = CGPoint(x: view.bounds.width / 2 + labelPoint.x, y: view.bounds.height / 2 + labelPoint.y)
@@ -253,46 +272,68 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         
         // Set Thumb Image
         if xFromCenter > 0 {
-            thumbImageView.image = #imageLiteral(resourceName: "ThumpDown")
-            thumbImageView.tintColor = UIColor.red
+//            thumbImageView.image = #imageLiteral(resourceName: "ThumpDown")
+//            thumbImageView.tintColor = UIColor.red
         } else {
-            thumbImageView.image = #imageLiteral(resourceName: "ThumpUp")
-            thumbImageView.tintColor = UIColor.green
+//            thumbImageView.image = #imageLiteral(resourceName: "ThumpUp")
+//            thumbImageView.tintColor = UIColor.green
             
         }
         
         // Show Thumb Image
-        let alphaValue = abs(xFromCenter/view.center.x)
-        thumbImageView.alpha = alphaValue
+//        let alphaValue = abs(xFromCenter/view.center.x)
+//        thumbImageView.alpha = alphaValue
         
         if gestureRecognizer.state == .ended {
             
             
-            if imagePreview.center.x < (view.bounds.width / 2 - 100) {
+            if imagePreview.center.x < (view.bounds.width / 2 - 130) {
                 print("Not Interested")
-                
                 // Thumbs Down
                 // Move off to the left
                 
-                self.dismiss(animated: true, completion: nil)
+               
                 
-                UIView.animate(withDuration: 0.3, animations: {
-                    self.imagePreview.center = CGPoint(x: self.imagePreview.center.x - 200, y: self.imagePreview.center.y + 100)
+                UIView.animate(withDuration: 0.3, animations: { [self] in
+                    self.imagePreview.center = CGPoint(x: self.imagePreview.center.x - 100, y: self.imagePreview.center.y - 100)
                     self.imagePreview.alpha = 0
+                    
+                    self.animationView = .init(name: "dislike")
+                    self.animationView!.contentMode = .scaleAspectFit
+                self.animationView?.frame = self.view.bounds
+                    self.view.addSubview(animationView!)
+                    self.animationView?.play()
+                    self.animationView?.play { (finished) in
+                        
+                        self.dismiss(animated: true, completion: nil)
+
+                        self.animationView?.removeFromSuperview()
+                    }
                 })
                 return
             }
             
-            if imagePreview.center.x > (view.bounds.width / 2 + 100) {
+            if imagePreview.center.x > (view.bounds.width / 2 + 130) {
                 print("Interested")
-                
-                //self.dismiss(animated: true, completion: nil)
-
                 
                 // Thumbs Up
                 UIView.animate(withDuration: 0.3, animations: {
-                    self.imagePreview.center = CGPoint(x:  self.imagePreview.center.x + 200, y:  self.imagePreview.center.y + 100)
+                    self.imagePreview.center = CGPoint(x:  self.imagePreview.center.x + 100, y:  self.imagePreview.center.y + 100)
                     self.imagePreview.alpha = 0
+                    
+                    
+                    self.animationView = .init(name: "thumbsup")
+                    self.animationView!.contentMode = .scaleAspectFit
+                self.animationView?.frame = self.view.bounds
+                    self.view.addSubview(self.animationView!)
+                    self.animationView?.play()
+                    self.animationView?.play { (finished) in
+                        
+                        self.dismiss(animated: true, completion: nil)
+
+                        self.animationView?.removeFromSuperview()
+                    }
+                    
                 })
                 
                 
@@ -307,17 +348,16 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
                     
                     self.saveSwipeToFirestore(didLike: 1)
 
-
-                    
                     if matched == true {
+                        
                         DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
                         
-                        
-                        
+                        DBService.shared.currentUser.child("Matched").child(matchedUser.userId!).setValue(matchedUser.userId!)
+
+                    DBService.shared.users.child(matchedUser.userId!).child("Matched").child(currentUserId).setValue(currentUserId)
                     } else if matched == false {
                         DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
                         DBService.shared.users.child(matchedUser.userId!).child("Matched-Users").child(currentUserId).setValue(true)
-                        
                     } else {
                         // Not matched yet
                         DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(false)
@@ -325,6 +365,8 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
                     
                     self.checkIfMatchExists(cardUID: currentUserId)
                 }
+                
+            
             }
             
             rotation = CGAffineTransform(rotationAngle: 0)
@@ -335,7 +377,6 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
             
             imagePreview.center = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2)
         }
-        
         resetCard()
         return
     }
@@ -369,6 +410,7 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
                     
                     if didLike == 1 {
                         self.checkIfMatchExists(cardUID: currentUserId)
+                        
                     }
                 }
             } else {
@@ -398,7 +440,7 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         
 
         
-       // guard let currentUserId = Auth.auth().currentUser?.uid else { return }
+        guard let currentUserId = Auth.auth().currentUser?.uid else { return }
 
         
         Firestore.firestore().collection("swipes").document(matchedUser.userId!).getDocument { (snapshot, err) in
@@ -417,6 +459,16 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
             if hasMatched {
                 print("Has matched")
                 self.presentMatchView(cardUID: cardUID)
+                
+                
+                DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
+                DBService.shared.users.child(matchedUser.userId!).child("Matched-Users").child(currentUserId).setValue(true)
+
+
+                
+                DBService.shared.currentUser.child("Matched").child(matchedUser.userId!).setValue(matchedUser.userId!)
+
+            DBService.shared.users.child(matchedUser.userId!).child("Matched").child(currentUserId).setValue(currentUserId)
 
                 //self.presentMatchView(cardUID: cardUID)
             }
@@ -442,6 +494,8 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         UIView.animate(withDuration: 0.8) {
             self.view.transform = .identity
         }
+        
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -460,6 +514,8 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
             self.SPB.currentAnimationIndex = 0
             self.SPB.isPaused = true
         }
+        
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -467,9 +523,7 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
+    
     
     //MARK: - SegmentedProgressBarDelegate
     //1
@@ -491,6 +545,10 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
         SPB.skip()
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     //MARK: - Play or show image
     func playVideoOrLoadImage(index: NSInteger) {
         
@@ -501,18 +559,28 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
             
             let content = item[index]["item"]
             
-            DispatchQueue.global(qos: .background).async {
-                let imageData = NSData(contentsOf: URL(string: content!)!)
-                
-                DispatchQueue.main.async {
-                    let contentImage = UIImage(data: imageData! as Data)
-                    self.imagePreview.image = contentImage
-                    
-                    let user = self.usersArray[self.pageIndex]
-                    
-                    self.lblUserName.text = user.username
-                }
-            }
+            let imageUrl = URL(string: content!)!
+            imagePreview.kf.indicatorType = .activity
+            imagePreview.kf.setImage(with: imageUrl )
+            imagePreview.contentMode = .scaleAspectFill
+            
+            
+            let user = self.usersArray[self.pageIndex]
+          
+                self.lblUserName.text = user.username
+            
+//            DispatchQueue.global(qos: .background).async {
+//                let imageData = NSData(contentsOf: URL(string: content!)!)
+//
+//                DispatchQueue.main.async {
+//                    let contentImage = UIImage(data: imageData! as Data)
+//                    self.imagePreview.image = contentImage
+//
+//                    let user = self.usersArray[self.pageIndex]
+//
+//                    self.lblUserName.text = user.username
+//                }
+//            }
             //let user = usersArray[pageIndex]
             
             // lblUserName.text = user.username
@@ -547,18 +615,41 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
     
     
     func sendRequestToUser(_ userID: String) {
+        
         USER_REF.child(userID).child("requests").child(CURRENT_USER_ID).setValue(true)
+       
+        let matchedUser = usersArray[pageIndex]
+        Helper.Pholio.matchedUser = matchedUser
+        
+        guard let currentUserId = Auth.auth().currentUser?.uid else { return }
+        
+        
+        ref.child("followers").child(matchedUser.userId!).child(currentUserId).setValue(true)
+
+
+        
     }
+    
     
     //MARK: - Button actions
     @IBAction func close(_ sender: Any) {
         
-        //sendRequestToUser(userID!)
-        
-        
-        
-        self.popOver.removeFromSuperview()
+        UIView.animate(withDuration: 0.5, animations: {
+            self.visualEffectView.alpha = 0
+            self.popOver.alpha = 0
+            self.popOver.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { (_) in
+            
+            self.dismiss(animated: true, completion: nil)
+
+            self.popOver.removeFromSuperview()
+            print("Did remove pop up window..")
+}
+
     }
+    
+
+    
 }
 
 
@@ -602,6 +693,7 @@ extension PreViewController: UITableViewDataSource {
                 
                 if matched == true {
                     DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
+                    DBService.shared.currentUser.child("Matched").child(matchedUser.userId!).setValue(matchedUser.userId!)
                     
                 } else if matched == false {
                     DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
@@ -610,10 +702,7 @@ extension PreViewController: UITableViewDataSource {
                 } else {
                     // Not matched yet
                     DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(false)
-                    
-                    
-                    
-                    
+               
                     let user = self.usersArray[self.pageIndex].userId
                     
                     self.sendRequestToUser(user!)
@@ -622,10 +711,24 @@ extension PreViewController: UITableViewDataSource {
                     
                     self.popOver.removeFromSuperview()
                     
+                    UIView.animate(withDuration: 0.3, animations: {
+                        self.imagePreview.center = CGPoint(x:  self.imagePreview.center.x + 100, y:  self.imagePreview.center.y + 100)
+                        self.imagePreview.alpha = 0
+                        self.animationView = .init(name: "checkmark")
+                        self.animationView!.contentMode = .scaleAspectFit
+                    self.animationView?.frame = self.view.bounds
+                        self.view.addSubview(self.animationView!)
+                        self.animationView?.play()
+                        self.animationView?.play { (finished) in
+                            
+                            self.dismiss(animated: true, completion: nil)
+
+                            self.animationView?.removeFromSuperview()
+                        }
+                        
+                    })
                     
-                    let emailNotSentAlert = UIAlertController(title: "Request Status", message: "Shoot Request Succesfully Sent", preferredStyle: .alert)
-                    emailNotSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self.present(emailNotSentAlert, animated: true, completion: nil)
+                    
                     
                     
                     
@@ -634,6 +737,8 @@ extension PreViewController: UITableViewDataSource {
                 }
             }
         }
+        
+        
         
         // Return cell
         return cell!

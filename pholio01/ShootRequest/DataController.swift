@@ -47,20 +47,29 @@ class FriendSystem {
     func getCurrentUser(_ completion: @escaping (UserModel) -> Void) {
         CURRENT_USER_REF.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             let email = snapshot.childSnapshot(forPath: "email").value as! String
+            let username = snapshot.childSnapshot(forPath: "username").value as! String
+            let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as! String
+            
+            //let Usertype = snapshot.childSnapshot(forPath: "Usertype").value as! String
+
+            
             let id = snapshot.key
-            completion(UserModel(userEmail: email, userId: id))
+            completion(UserModel(userEmail: email, userId: id, username: username, profileImageURL: profileImageURL))
         })
     }
     /** Gets the User object for the specified user id */
     func getUser(_ userID: String, completion: @escaping (UserModel) -> Void) {
         USER_REF.child(userID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+           // let email = snapshot.childSnapshot(forPath: "email").value as! String
+            let username = snapshot.childSnapshot(forPath: "username").value as! String
+            let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as! String
             
+            let Usertype = snapshot.childSnapshot(forPath: "Usertype").value as! String
+
             
-            //
-            //Make snapshot of email OPTIONAL!! string 
-            let email = snapshot.childSnapshot(forPath: "email").value as! String
             let id = snapshot.key
-            completion(UserModel(userEmail: email, userId: id))
+            
+            completion(UserModel(userEmail: Usertype, userId: id, username: username, profileImageURL: profileImageURL))
         })
     }
     

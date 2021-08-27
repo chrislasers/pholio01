@@ -24,6 +24,8 @@ class Service {
     
     static func dismissHud(_ hud:JGProgressHUD, text: String, detailText: String, delay: TimeInterval) {
         
+        
+        
         hud.textLabel.text = text
         hud.detailTextLabel.text = detailText
         hud.dismiss(afterDelay: delay, animated: true)

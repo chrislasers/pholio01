@@ -27,6 +27,10 @@ import Pastel
 import Kingfisher
 import CircleMenu
 import FAPanels
+import ViewAnimator
+import SwiftUI
+import Lottie
+import NVActivityIndicatorView
 
 
 extension UIColor {
@@ -39,48 +43,51 @@ extension UIColor {
     }
 }
 
-class BViewController: BaseViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, FAPanelStateDelegate {
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+
+class BViewController: BaseViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, UIGestureRecognizerDelegate, FAPanelStateDelegate {
     
     @IBOutlet weak var map: MKMapView!
-    
-    
-    
-    @IBAction func button(_ sender: Any) {
-    }
-    
-    @IBOutlet var coloredImageView: UIImageView!
-    
-    
-    var colorArray: [(color1: UIColor, color2: UIColor)] = []
     
     
     
     
     @IBOutlet weak var locationLabel: UILabel!
     
+  
+    
+    @IBOutlet weak var collectionView: UICollectionView!
+    
+    var colorArray: [(color1: UIColor, color2: UIColor)] = []
+
+    
     var locationManager = CLLocationManager()
     var currentLocation: CLLocation!
+    
+    var animationView: AnimationView?
     
     
     var geoFireRef: DatabaseReference?
     var geoFire: GeoFire!
-    
-    @IBOutlet weak var collectionView: UICollectionView!
     
     var ref: DatabaseReference!
     var arrImages: [[String: String]] = []
     
     var usersArray = [UserModel]()
     var seenUsersArray = [UserModel]()
+
+    
+   private let animations = [AnimationType.from(direction: .top, offset: 120.0)]
+
     
     lazy var refreshControl:UIRefreshControl = {
         
         let refreshControl = UIRefreshControl()
         refreshControl.tintColor = .white
+    
+        refreshControl.addTarget(self, action: #selector(self.requestData), for: .valueChanged)
         
-        
-        refreshControl.addTarget(self, action: #selector(requestData), for: .valueChanged)
-        
+                
         return refreshControl
         
     }()
@@ -99,60 +106,65 @@ class BViewController: BaseViewController, UICollectionViewDelegate, UICollectio
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        
-        if Helper.Pholio.shouldRefreshFilteredList {
-            getFilteredUserList(refreshList: true)
-            Helper.Pholio.shouldRefreshFilteredList = false
+       
+        DispatchQueue.main.async {
+            
+               if Helper.Pholio.shouldRefreshFilteredList {
+                   self.getFilteredUserList(refreshList: false)
+                   Helper.Pholio.shouldRefreshFilteredList = true
+               }
+
         }
-        
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont(name: "GillSans-UltraBold", size: 23.0)!]
-        
-        
-        
-        
-        
+     
+    
         
         let button = UIButton(type: .custom)
        // set image for button
-        button.setImage(UIImage(named: "speech-bubble"), for: .normal)
+        button.setImage(UIImage(named: "chat-3"), for: .normal)
       //  add function for button
         button.addTarget(self, action: #selector(fbButtonPressed), for: .touchUpInside)
        // set frame
         button.frame = CGRect(x: 0, y: 0, width: 29, height: 29)
         
-        let widthConstraint = button.widthAnchor.constraint(equalToConstant: 27)
-        let heightConstraint = button.heightAnchor.constraint(equalToConstant: 27)
+        let widthConstraint = button.widthAnchor.constraint(equalToConstant: 29)
+        let heightConstraint = button.heightAnchor.constraint(equalToConstant: 29)
+        
         heightConstraint.isActive = true
         widthConstraint.isActive = true
         
         let barButton = UIBarButtonItem(customView: button)
        // assign button to navigationbar
         self.navigationItem.rightBarButtonItem = barButton
-        
-        
-        
-        
-      //  animateBackgroundColor()
-        
-        
-        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+       
+
+        self.getFilteredUserList(refreshList: true)
+
+        self.collectionView.refreshControl = self.refreshControl
+
+            DispatchQueue.main.async {
+                
+                //self.getFilteredUserList(refreshList: true)
+
+
+            self.collectionView.delegate = self
+            self.collectionView.dataSource = self
+              self.collectionView.reloadData()
+                
+        }
         
+            
                 
         let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(sender:)))
         leftSwipe.direction = .left
         
         view.addGestureRecognizer(leftSwipe)
         
-        
-        
-        getFilteredUserList(refreshList: false)
-        
-        
+
         Auth.auth().addStateDidChangeListener { (auth, user) in
             
             if Auth.auth().currentUser != nil
@@ -162,17 +174,13 @@ class BViewController: BaseViewController, UICollectionViewDelegate, UICollectio
                 
             }  else {
                 
-                
                 print("User Not Signed In")
             }
-            
-           // self.animateBackgroundColor()
-            
+                        
         }
         
         
         
-        collectionView.refreshControl = refreshControl
         
         locationLabel.isHidden = true
         
@@ -196,64 +204,23 @@ class BViewController: BaseViewController, UICollectionViewDelegate, UICollectio
         
         let db = Firestore.firestore()
         let settings = db.settings
-        settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
         
-        DispatchQueue.main.async {
-            self.collectionView.delegate = self
-            self.collectionView.dataSource = self
-              self.collectionView.reloadData()
-            
-        }
+    
+      setupNavigationItems()
 
-//      setupNavigationItems()
-//
-//    setupMenuController()
-//
-// setupPanGesture()
-//
-//  setupDarkCoverView()
+    setupMenuController()
 
-self.addSlideMenuButton()
+ setupPanGesture()
+
+  setupDarkCoverView()
+
+       // self.addSlideMenuButton()
         
      
-        
-        
-        
-       
-        
-        let pastelView = PastelView(frame: view.bounds)
-        
-        //MARK: -  Custom Direction
-        pastelView.startPastelPoint = .bottomLeft
-        pastelView.endPastelPoint = .topRight
-        
-        //MARK: -  Custom Duration
-        
-        pastelView.animationDuration = 3.00
-        
-        //MARK: -  Custom Color
-        pastelView.setColors([
-            
-            UIColor(red: 255/255, green: 64/255, blue: 129/255, alpha: 1.0),
-            
-            
-            UIColor(red: 123/255, green: 31/255, blue: 162/255, alpha: 1.0),
-            
-            
-            
-            UIColor(red: 50/255, green: 157/255, blue: 240/255, alpha: 1.0)])
-        
-        //   UIColor(red: 90/255, green: 120/255, blue: 127/255, alpha: 1.0),
-        
-        
-        //  UIColor(red: 58/255, green: 255/255, blue: 217/255, alpha: 1.0)])
-        
-        pastelView.startAnimation()
-        view.insertSubview(pastelView, at: 3)
-        
-        
     }
+    
+    
     
     func circleMenu(_: CircleMenu, willDisplay button: UIButton, atIndex: Int) {
         button.backgroundColor = items[atIndex].color
@@ -275,6 +242,8 @@ self.addSlideMenuButton()
     }
     
     
+    
+    
   
     let darkCoverView = UIView()
     
@@ -286,6 +255,8 @@ self.addSlideMenuButton()
         mainWindow?.addSubview(darkCoverView)
         darkCoverView.frame = mainWindow?.frame ?? .zero
     }
+    
+    
     
     fileprivate func setupPanGesture() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
@@ -416,10 +387,10 @@ self.addSlideMenuButton()
 
     }
     
+    
+    
     func didSelectMenuItem(indexPath: IndexPath) {
         //        print("Selected menu item:", indexPath.row)
-        
-        
         
         switch indexPath.row {
             
@@ -436,8 +407,6 @@ self.addSlideMenuButton()
            
                       print("Show Lists Screen")
            // self.openViewControllerBasedOnIdentifier("Home")
-
-            
         case 2:
             
             print("Show Lists Screen")
@@ -473,7 +442,19 @@ self.addSlideMenuButton()
     
     
     fileprivate func setupNavigationItems() {
-        navigationItem.title = "Home"
+        
+        
+        let attrs = [
+            NSAttributedString.Key.foregroundColor: UIColor.white,
+           NSAttributedString.Key.font: UIFont(name: "Academy Engraved LET Plain:1.0", size: 33)!
+            
+        ]
+        navigationItem.title = "PHOLLIO"
+        
+        UINavigationBar.appearance().titleTextAttributes = attrs
+
+        
+        
         
         setupCircularNavigationButton()
         
@@ -483,33 +464,29 @@ self.addSlideMenuButton()
     }
     
     fileprivate func setupCircularNavigationButton() {
-        let image = #imageLiteral(resourceName: "girl_profile").withRenderingMode(.alwaysOriginal)
+        let image = #imageLiteral(resourceName: "user-2").withRenderingMode(.alwaysOriginal)
         
         let customView = UIButton(type: .system)
         //        customView.backgroundColor = .orange
         customView.addTarget(self, action: #selector(handleOpen), for: .touchUpInside)
         //        customView.imageView?.image // this is not what you want
         customView.setImage(image, for: .normal)
-        customView.imageView?.contentMode = .scaleAspectFit
+        customView.imageView?.contentMode = .scaleAspectFill
         
-        customView.layer.cornerRadius = 20
+        //customView.layer.cornerRadius = 20
         customView.clipsToBounds = true
         
-        // this doesn't work
-        // custom view uses auto layout to put itself in the nav bar
-        //        customView.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         
-        customView.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        customView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        customView.widthAnchor.constraint(equalToConstant: 31).isActive = true
+        customView.heightAnchor.constraint(equalToConstant: 31).isActive = true
         
         let barButtonItem = UIBarButtonItem(customView: customView)
         
         navigationItem.leftBarButtonItem = barButtonItem
         
-        // option #1 that doesn't work
-        //        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(handleOpen))
-        
     }
+
     
     
     private func getFilteredUserList(refreshList: Bool) {
@@ -522,7 +499,7 @@ self.addSlideMenuButton()
             
             DBService.shared.getFilteredUsers(refreshList: refreshList, completion: { (usersArray) in
                 self.usersArray = usersArray
-                self.collectionView.reloadData()
+               self.collectionView.reloadData()
             })
             
         }
@@ -553,46 +530,50 @@ self.addSlideMenuButton()
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 8.0, execute: {
+        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
             self.locationManager.stopUpdatingLocation()
             
             self.locationManager.delegate = nil
             
             self.map.showsUserLocation = false
-            
         })
+        
         
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        
-        
         super.viewDidAppear(animated)
         
         
-       // animateBackgroundColor()
+        let pastelView = PastelView(frame: view.bounds)
+        
+        //MARK: -  Custom Direction
+        pastelView.startPastelPoint = .bottomLeft
+        pastelView.endPastelPoint = .topRight
+        
+        //MARK: -  Custom Duration
+        
+        pastelView.animationDuration = 3.00
+        
+        //MARK: -  Custom Color
+        pastelView.setColors([
+            
+            UIColor(red: 255/255, green: 64/255, blue: 129/255, alpha: 1.0),
+            
+            
+            UIColor(red: 123/255, green: 31/255, blue: 162/255, alpha: 1.0),
+            
+            UIColor(red: 50/255, green: 157/255, blue: 240/255, alpha: 1.0)])
+      
+        pastelView.startAnimation()
+        
+        view.insertSubview(pastelView, at: 1)
         
         
     }
     
-    
-    
-    
-    func animateBackgroundColor() {
-        // METHOD 1
-        UIView.animate(withDuration: 9, delay: 0, options: [.autoreverse, .repeat, .curveLinear, .allowUserInteraction], animations: {
-            let x = -(self.coloredImageView.frame.width - self.view.frame.width)
-            self.coloredImageView.transform = CGAffineTransform(translationX: x, y: 0)
-            
-            self.coloredImageView.transform = CGAffineTransform.identity
-            
-            
-            
-        })
-        
-    }
-    
+
     @objc func handleSwipe(sender: UISwipeGestureRecognizer) {
         if sender.state == .ended {
             switch sender.direction {
@@ -606,40 +587,30 @@ self.addSlideMenuButton()
         }
     }
     
-    
-    
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    
-    
-    
     @objc func requestData() {
+
         
-        UIView.transition(with: collectionView, duration: 0.5, options: .transitionFlipFromTop, animations: {
-            //Do the data reload here
-            // self.collectionView.reloadData()
-            self.getFilteredUserList(refreshList: false)
-            
-        }, completion: nil)
+        DispatchQueue.main.async {
+
         
-        
-        
-        // getFilteredUserList(refreshList: false)
-        
-        print("REQUEST DATA!!!")
-        
-        
-        
+            UIView.animate(views: self.collectionView!.orderedVisibleCells,
+                           animations: self.animations, reversed: false,
+                              initialAlpha: 8.0,
+                              finalAlpha: 15.0,
+                              completion: {
+                              self.collectionView.reloadData()
+                                self.getFilteredUserList(refreshList: false)
+                                print("REQUEST DATA!!!")
+
+               })
+    
         let deadline = DispatchTime.now() + .milliseconds(700)
         DispatchQueue.main.asyncAfter(deadline: deadline) {
             self.refreshControl.endRefreshing()
         }
-        
-        
-        
-        
-        
     }
+    }
+    
     
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -747,6 +718,7 @@ self.addSlideMenuButton()
     
     
     
+    
     // MARK: - UICollectionViewDataSource
     //1
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -766,11 +738,14 @@ self.addSlideMenuButton()
         
         let user = usersArray[indexPath.row]
         
+        NVActivityIndicatorView(frame: .zero, type: .ballClipRotateMultiple, color: .blue, padding: 0)
+        
         let imageUrl = URL(string: user.profileImageUrl!)!
         cell.storyImages.kf.indicatorType = .activity
         cell.storyImages.kf.setImage(with: imageUrl)
-        
+    
         cell.layoutIfNeeded()
+        
         
         /*
          DispatchQueue.global(qos: .background).async {
@@ -806,6 +781,8 @@ self.addSlideMenuButton()
     
     
     
+    
+    
     // MARK: - UICollectionViewDelegate
     //1
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -817,7 +794,7 @@ self.addSlideMenuButton()
                 print("no images uploaded")
                 
             } else {
-                self.usersArray[indexPath.row] = refreshedUser
+               self.usersArray[indexPath.row] = refreshedUser
                 
                 DispatchQueue.main.async {
                     let vc = self.storyboard?.instantiateViewController(withIdentifier: "ContentViewController") as! ContentViewController

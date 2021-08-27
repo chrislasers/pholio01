@@ -7,6 +7,7 @@
 
 import UIKit
 
+@available(iOS 9.0, *)
 open class LBTAFormController: UIViewController {
     
     var lowestElement: UIView!
@@ -23,6 +24,7 @@ open class LBTAFormController: UIViewController {
     public let formContainerStackView: UIStackView = {
         let sv = UIStackView()
         sv.isLayoutMarginsRelativeArrangement = true
+        sv.axis = .vertical
         return sv
     }()
     

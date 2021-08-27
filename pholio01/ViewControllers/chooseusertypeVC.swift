@@ -233,6 +233,9 @@ class chooseusertypeVC: UIViewController {
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Usertype": photographer])
         
         
+               self.ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Usertype": photographer])
+               
+        
         self.performSegue(withIdentifier: "toPair", sender: nil)
         
         print("Photographer Stored")
@@ -245,6 +248,8 @@ class chooseusertypeVC: UIViewController {
         
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Usertype": model])
         
+         self.ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Usertype": model])
+        
         performSegue(withIdentifier: "toPair", sender: nil)
         
         print("Model Stored")
@@ -256,6 +261,9 @@ class chooseusertypeVC: UIViewController {
     @IBAction func gPressed(_ sender: Any) {
         
         self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Usertype": Guest])
+        
+        
+              self.ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["Usertype": Guest])
         
         performSegue(withIdentifier: "toPair", sender: nil)
         

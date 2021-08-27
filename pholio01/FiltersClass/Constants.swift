@@ -11,4 +11,6 @@ import UIKit
 
 struct Colors {
     static let twitterBlue = UIColor(red: 29.0/255.0, green: 161.0/255.0, blue: 242.0/255.0, alpha: 1.0)
+    
+    static let coolBlue = UIColor(red: 42/255, green: 126/255, blue: 254/255, alpha: 1.0)
 }

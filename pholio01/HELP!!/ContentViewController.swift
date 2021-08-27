@@ -38,14 +38,15 @@ class ContentViewController: UIViewController, UIPageViewControllerDataSource, U
         pageViewController!.didMove(toParent: self)
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
+ 
     
     // MARK: - UIPageViewControllerDataSource
     //1

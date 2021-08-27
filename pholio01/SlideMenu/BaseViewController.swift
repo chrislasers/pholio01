@@ -71,7 +71,7 @@ class BaseViewController: UIViewController, SlideMenuDelegate {
        case 4:
            print("Settings\n", terminator: "")
             
-           self.openViewControllerBasedOnIdentifier("SettingsController")
+           self.openViewControllerBasedOnIdentifier("NewSettings")
             
            break
         case 5:
@@ -86,11 +86,12 @@ class BaseViewController: UIViewController, SlideMenuDelegate {
                 
                 do {
                     
-                    try Auth.auth().signOut()
-                    
-                    FBSDKAccessToken.setCurrent(nil)
-                    FBSDKProfile.setCurrent(nil)
-                    FBSDKLoginManager().logOut()
+                      let firebaseAuth = Auth.auth()
+                    do {
+                      try firebaseAuth.signOut()
+                    } catch let signOutError as NSError {
+                      print ("Error signing out: %@", signOutError)
+                    }
                     
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let signinvc = storyboard.instantiateViewController(withIdentifier: "signinvc")
@@ -176,7 +177,7 @@ class BaseViewController: UIViewController, SlideMenuDelegate {
                 frameMenu.origin.x = -1 * UIScreen.main.bounds.size.width
                 viewMenuBack.frame = frameMenu
                 viewMenuBack.layoutIfNeeded()
-                viewMenuBack.backgroundColor = UIColor.clear
+                viewMenuBack.backgroundColor = UIColor.black
             }, completion: { (finished) -> Void in
                 viewMenuBack.removeFromSuperview()
             })
