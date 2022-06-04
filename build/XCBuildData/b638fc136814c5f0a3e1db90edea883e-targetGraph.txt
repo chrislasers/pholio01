@@ -1,0 +1,209 @@
+Target dependency graph (70 targets)
+Alamofire in Pods
+AppAuth in Pods
+BSGridCollectionViewLayout in Pods
+BSImagePicker-BSImagePicker in Pods
+BSImageView in Pods
+BSImagePicker in Pods, depends on:
+BSGridCollectionViewLayout in Pods (explicit)
+BSImagePicker-BSImagePicker in Pods (explicit)
+BSImageView in Pods (explicit)
+BoringSSL-GRPC in Pods
+CTSlidingUpPanel in Pods
+CircleMenu in Pods
+Cosmos in Pods
+FAPanels in Pods
+FBSDKCoreKit in Pods
+FBSDKLoginKit in Pods, depends on:
+FBSDKCoreKit in Pods (explicit)
+FBSDKShareKit in Pods, depends on:
+FBSDKCoreKit in Pods (explicit)
+FacebookCore in Pods, depends on:
+FBSDKCoreKit in Pods (explicit)
+FacebookLogin in Pods, depends on:
+FBSDKCoreKit in Pods (explicit)
+FBSDKLoginKit in Pods (explicit)
+FacebookCore in Pods (explicit)
+FacebookShare in Pods, depends on:
+FBSDKCoreKit in Pods (explicit)
+FBSDKShareKit in Pods (explicit)
+FacebookCore in Pods (explicit)
+nanopb in Pods
+GoogleDataTransport in Pods, depends on:
+nanopb in Pods (explicit)
+PromisesObjC in Pods
+GoogleUtilities in Pods, depends on:
+PromisesObjC in Pods (explicit)
+FirebaseCoreDiagnostics in Pods, depends on:
+GoogleDataTransport in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+nanopb in Pods (explicit)
+FirebaseCore in Pods, depends on:
+FirebaseCoreDiagnostics in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+FirebaseInstallations in Pods, depends on:
+FirebaseCore in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+PromisesObjC in Pods (explicit)
+GoogleAppMeasurement in Pods, depends on:
+GoogleUtilities in Pods (explicit)
+nanopb in Pods (explicit)
+FirebaseAnalytics in Pods, depends on:
+FirebaseCore in Pods (explicit)
+FirebaseInstallations in Pods (explicit)
+GoogleAppMeasurement in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+nanopb in Pods (explicit)
+GTMSessionFetcher in Pods
+FirebaseAuth in Pods, depends on:
+FirebaseCore in Pods (explicit)
+GTMSessionFetcher in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+leveldb-library in Pods
+FirebaseDatabase in Pods, depends on:
+FirebaseCore in Pods (explicit)
+leveldb-library in Pods (explicit)
+abseil in Pods
+gRPC-C++-gRPCCertificates-Cpp in Pods
+gRPC-Core in Pods, depends on:
+BoringSSL-GRPC in Pods (explicit)
+abseil in Pods (explicit)
+gRPC-C++ in Pods, depends on:
+abseil in Pods (explicit)
+gRPC-C++-gRPCCertificates-Cpp in Pods (explicit)
+gRPC-Core in Pods (explicit)
+FirebaseFirestore in Pods, depends on:
+FirebaseCore in Pods (explicit)
+abseil in Pods (explicit)
+gRPC-C++ in Pods (explicit)
+leveldb-library in Pods (explicit)
+nanopb in Pods (explicit)
+FirebaseInstanceID in Pods, depends on:
+FirebaseCore in Pods (explicit)
+FirebaseInstallations in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+Protobuf in Pods
+FirebaseMessaging in Pods, depends on:
+FirebaseCore in Pods (explicit)
+FirebaseInstanceID in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+Protobuf in Pods (explicit)
+FirebaseStorage in Pods, depends on:
+FirebaseCore in Pods (explicit)
+GTMSessionFetcher in Pods (explicit)
+Firebase in Pods, depends on:
+FirebaseAnalytics in Pods (explicit)
+FirebaseAuth in Pods (explicit)
+FirebaseCore in Pods (explicit)
+FirebaseDatabase in Pods (explicit)
+FirebaseFirestore in Pods (explicit)
+FirebaseMessaging in Pods (explicit)
+FirebaseStorage in Pods (explicit)
+FirebaseUI-FirebaseAnonymousAuthUI in Pods
+FirebaseUI-FirebaseAuthUI in Pods
+FirebaseUI-FirebaseEmailAuthUI in Pods
+FirebaseUI-FirebaseFacebookAuthUI in Pods
+FirebaseUI-FirebaseGoogleAuthUI in Pods
+FirebaseUI-FirebaseOAuthUI in Pods
+FirebaseUI-FirebasePhoneAuthUI in Pods
+GTMAppAuth in Pods, depends on:
+AppAuth in Pods (explicit)
+GTMSessionFetcher in Pods (explicit)
+GoogleSignIn in Pods, depends on:
+AppAuth in Pods (explicit)
+GTMAppAuth in Pods (explicit)
+GTMSessionFetcher in Pods (explicit)
+SDWebImage in Pods
+FirebaseUI in Pods, depends on:
+FBSDKLoginKit in Pods (explicit)
+Firebase in Pods (explicit)
+FirebaseUI-FirebaseAnonymousAuthUI in Pods (explicit)
+FirebaseUI-FirebaseAuthUI in Pods (explicit)
+FirebaseUI-FirebaseEmailAuthUI in Pods (explicit)
+FirebaseUI-FirebaseFacebookAuthUI in Pods (explicit)
+FirebaseUI-FirebaseGoogleAuthUI in Pods (explicit)
+FirebaseUI-FirebaseOAuthUI in Pods (explicit)
+FirebaseUI-FirebasePhoneAuthUI in Pods (explicit)
+GoogleSignIn in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+SDWebImage in Pods (explicit)
+Fusuma in Pods
+GeoFire in Pods, depends on:
+Firebase in Pods (explicit)
+Haneke in Pods
+InstagramLogin in Pods
+JGProgressHUD in Pods
+Kingfisher in Pods
+LBTAComponents in Pods
+LBTATools in Pods
+NVActivityIndicatorView in Pods
+OpalImagePicker-OpalImagePickerResources in Pods
+OpalImagePicker in Pods, depends on:
+OpalImagePicker-OpalImagePickerResources in Pods (explicit)
+Pastel in Pods
+SwiftValidator in Pods
+SwiftyJSON in Pods
+TextFieldEffects in Pods
+UICircularProgressRing in Pods
+ViewAnimator in Pods
+lottie-ios in Pods
+Pods-pholio01 in Pods, depends on:
+Alamofire in Pods (explicit)
+AppAuth in Pods (explicit)
+BSGridCollectionViewLayout in Pods (explicit)
+BSImagePicker in Pods (explicit)
+BSImageView in Pods (explicit)
+BoringSSL-GRPC in Pods (explicit)
+CTSlidingUpPanel in Pods (explicit)
+CircleMenu in Pods (explicit)
+Cosmos in Pods (explicit)
+FAPanels in Pods (explicit)
+FBSDKCoreKit in Pods (explicit)
+FBSDKLoginKit in Pods (explicit)
+FBSDKShareKit in Pods (explicit)
+FacebookCore in Pods (explicit)
+FacebookLogin in Pods (explicit)
+FacebookShare in Pods (explicit)
+Firebase in Pods (explicit)
+FirebaseAnalytics in Pods (explicit)
+FirebaseAuth in Pods (explicit)
+FirebaseCore in Pods (explicit)
+FirebaseCoreDiagnostics in Pods (explicit)
+FirebaseDatabase in Pods (explicit)
+FirebaseFirestore in Pods (explicit)
+FirebaseInstallations in Pods (explicit)
+FirebaseInstanceID in Pods (explicit)
+FirebaseMessaging in Pods (explicit)
+FirebaseStorage in Pods (explicit)
+FirebaseUI in Pods (explicit)
+Fusuma in Pods (explicit)
+GTMAppAuth in Pods (explicit)
+GTMSessionFetcher in Pods (explicit)
+GeoFire in Pods (explicit)
+GoogleAppMeasurement in Pods (explicit)
+GoogleDataTransport in Pods (explicit)
+GoogleSignIn in Pods (explicit)
+GoogleUtilities in Pods (explicit)
+Haneke in Pods (explicit)
+InstagramLogin in Pods (explicit)
+JGProgressHUD in Pods (explicit)
+Kingfisher in Pods (explicit)
+LBTAComponents in Pods (explicit)
+LBTATools in Pods (explicit)
+NVActivityIndicatorView in Pods (explicit)
+OpalImagePicker in Pods (explicit)
+Pastel in Pods (explicit)
+PromisesObjC in Pods (explicit)
+Protobuf in Pods (explicit)
+SDWebImage in Pods (explicit)
+SwiftValidator in Pods (explicit)
+SwiftyJSON in Pods (explicit)
+TextFieldEffects in Pods (explicit)
+UICircularProgressRing in Pods (explicit)
+ViewAnimator in Pods (explicit)
+abseil in Pods (explicit)
+gRPC-C++ in Pods (explicit)
+gRPC-Core in Pods (explicit)
+leveldb-library in Pods (explicit)
+lottie-ios in Pods (explicit)
+nanopb in Pods (explicit)
