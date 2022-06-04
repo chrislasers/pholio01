@@ -106,16 +106,17 @@ class BViewController: BaseViewController, UICollectionViewDelegate, UICollectio
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-       
-        DispatchQueue.main.async {
-            
-               if Helper.Pholio.shouldRefreshFilteredList {
-                   self.getFilteredUserList(refreshList: false)
-                   Helper.Pholio.shouldRefreshFilteredList = true
-               }
-
-        }
-     
+        
+      
+//        DispatchQueue.main.async {
+//
+//               if Helper.Pholio.shouldRefreshFilteredList {
+//                   self.getFilteredUserList(refreshList: false)
+//                   Helper.Pholio.shouldRefreshFilteredList = true
+//               }
+//
+//        }
+//
     
         
         let button = UIButton(type: .custom)
@@ -142,13 +143,13 @@ class BViewController: BaseViewController, UICollectionViewDelegate, UICollectio
        
        
 
-        self.getFilteredUserList(refreshList: true)
+        //self.getFilteredUserList(refreshList: true)
 
         self.collectionView.refreshControl = self.refreshControl
 
             DispatchQueue.main.async {
                 
-                //self.getFilteredUserList(refreshList: true)
+                self.getFilteredUserList(refreshList: true)
 
 
             self.collectionView.delegate = self
@@ -219,6 +220,38 @@ class BViewController: BaseViewController, UICollectionViewDelegate, UICollectio
         
      
     }
+    
+//
+//    func checkBlockedRefsForBothUsers() {
+//
+//
+//        let matchedUser = usersArray[pageIndex]
+//        Helper.Pholio.matchedUser = matchedUser
+//
+//
+//        let currentUsersBlockedRef =  ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("User-Incidents").child("Blocked-Users").child("Blocked").child(matchedUser.userId!)
+//
+//        currentUsersBlockedRef.observe( .value, with: { (snapshot) in
+//
+//            // if the current user ISN'T under the blocked ref then the other user ISN'T blocked
+//            if !snapshot.exists() {
+//
+//                print(snapshot)
+//
+//                return
+//            }
+//
+//            for child in snapshot.children {
+//                let snap = child as! DataSnapshot
+//print(snap)
+//                // if the other user's uid IS under the current user's blocked ref then the other user IS blocked from them
+////                if snap.key == self.otherUsersId {
+////                    self.isOtherUserBlocked = true
+////                    break
+////                }
+//            }
+//        })
+//    }
     
     
     
@@ -746,7 +779,38 @@ class BViewController: BaseViewController, UICollectionViewDelegate, UICollectio
     
         cell.layoutIfNeeded()
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+
+        if Auth.auth().currentUser != nil {
+            self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("User-Incidents").child("Blocked-Users").child("Blocked")
+            
+                .observeSingleEvent(of: .childAdded, with: { (snapshot) in
+                
+            if snapshot.exists(){
+                
+                self.usersArray.removeAll()
+                self.collectionView.reloadData()
+               // print(snapshot)
+               } else {
+                   
+                   //Auth.auth().currentUser?.delete(completion: nil)
+                   
+                    print("NO BLOCKED USERS!")
+
+                }
+                    
+                    let successAlert = UIAlertController(title: "Blocked User", message: "User has been blocked and removed from your feed!", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+                    successAlert.addAction(okAction)
+                    self.present(successAlert, animated: true, completion: nil)
+                    self.collectionView.reloadData()
+
+                
+               
+                        })
+                    }
         
+        })
         /*
          DispatchQueue.global(qos: .background).async {
          
@@ -797,7 +861,7 @@ class BViewController: BaseViewController, UICollectionViewDelegate, UICollectio
                self.usersArray[indexPath.row] = refreshedUser
                 
                 DispatchQueue.main.async {
-                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "ContentViewController") as! ContentViewController
+                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "NewContentViewController") as! NewContentViewController
                     vc.modalPresentationStyle = .overFullScreen
                     vc.pages = self.usersArray
                     vc.currentIndex = indexPath.row

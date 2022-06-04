@@ -20,7 +20,7 @@ import Lottie
 
 
 
-class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
+class ProfileVC: UIViewController, SegmentedProgressBarDelegate, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
     
     
     
@@ -34,24 +34,51 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
  
     @IBOutlet var userGender: UILabel!
     @IBOutlet var userAge: UILabel!
-    @IBOutlet var userHR: UILabel!
-    
     @IBOutlet weak var lblUserName: UILabel!
-    
-    
     @IBOutlet var popOver: UIView!
+    @IBOutlet var popUPView: UIView!
+    
+    
+    @IBOutlet weak var blockBTN: UIButton!
     
     
     @IBOutlet var tableView: UITableView!
-    
-    
     @IBOutlet weak var gallery: UICollectionView!
     
+    struct Storyboard {
+      
+        static let showDetailVC = "ShowImageDetail"
+  
+    }
     
-    let images: [UIImage] = [#imageLiteral(resourceName: "venom-6"), #imageLiteral(resourceName: "venom-1"), #imageLiteral(resourceName: "venom-3"), #imageLiteral(resourceName: "venom-1"), #imageLiteral(resourceName: "venom-4"), #imageLiteral(resourceName: "carnage"), #imageLiteral(resourceName: "venom-4"), #imageLiteral(resourceName: "venom"), #imageLiteral(resourceName: "venom02"), #imageLiteral(resourceName: "venom-7"), #imageLiteral(resourceName: "venom-10"), #imageLiteral(resourceName: "venom-8"), #imageLiteral(resourceName: "venom-6"), #imageLiteral(resourceName: "carnage-2"), #imageLiteral(resourceName: "venom-4")]
+    var selectedImage: UIImage!
+    let images: [UIImage] =  [
+        
+        UIImage(named: "galley1" )!,
+        UIImage(named: "galley2" )!,
+        UIImage(named: "galley3" )!,
+        UIImage(named: "galley4" )!,
+        UIImage(named: "galley5" )!,
+        UIImage(named: "galley6" )!,
+        UIImage(named: "galley7" )!,
+        UIImage(named: "galley8" )!,
+        UIImage(named: "galley9" )!,
+        UIImage(named: "galley10" )!,
+        UIImage(named: "galley11" )!,
+        UIImage(named: "galley12" )!,
+        UIImage(named: "galley13" )!,
+        UIImage(named: "galley14" )!,
+        UIImage(named: "galley15" )!,
 
+
+        
     
-
+    ]
+    var photoshoots = ["Forest Park", "Gateway Arch", "Elk Park", "Art Hill"]
+    var selectedimage: UIImage!
+    
+    
+   
     
     let visualEffectView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .light)
@@ -62,7 +89,6 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
     
  
     var animationView: AnimationView?
-
     
     var pageIndex : Int = 0
     var items = [[String: Any]]()
@@ -71,8 +97,7 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
     var player: AVPlayer!
     
     var usersArray = [UserModel]()
-    var photos: Photos!
-    var spot: Spot!
+
     
     let storageRef = Storage.storage().reference(withPath: "PHOTOS")
     let databaseRef = Database.database().reference(withPath:"PHOTOS")
@@ -125,7 +150,11 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        
+        
         popOver.frame = CGRect(x: 0, y: 1500, width: popOver.frame.size.width, height: popOver.frame.size.height )
+        
+      
 
         
         UIView.animate(withDuration: 0.8) {
@@ -135,6 +164,8 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
         
 
     }
+    
+    
     
     
     override func viewDidAppear(_ animated: Bool) {
@@ -173,6 +204,7 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
             
             if Auth.auth().currentUser != nil
             {
+                
                 print("Signed Into PreviewController")
                 //self.performSegue(withIdentifier: "homepageVC", sender: nil)    }
                 
@@ -183,29 +215,34 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
             }
         }
         
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(dragged(gestureRecognizer:)))
-        popOver.isUserInteractionEnabled = true
-        popOver.addGestureRecognizer(panGesture)
-        
-        
-        view.addSubview(visualEffectView)
-        visualEffectView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        visualEffectView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        
-        visualEffectView.alpha = 0
+      
+//
+//
+//        view.addSubview(visualEffectView)
+//        visualEffectView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+//        visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+//        visualEffectView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+//        visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+//
+//        visualEffectView.alpha = 0
         
         
         popOver.layer.borderColor = UIColor.white.withAlphaComponent(0.12).cgColor
         popOver.layer.borderWidth = 1.5
         popOver.layer.cornerRadius = 32
         //popOver.clipsToBounds = true
-
         popOver.layer.shadowColor = UIColor.black.cgColor
         popOver.layer.shadowOpacity = 25
         popOver.layer.shadowOffset = .zero
         popOver.layer.shadowRadius = 0
+        
+        popUPView.layer.cornerRadius = 4.0
+        popUPView.layer.shadowColor = UIColor.black.cgColor
+        popUPView.layer.shadowOpacity = 0.5
+        popUPView.layer.shadowOffset = .zero
+        popUPView.layer.shadowRadius = 5
+        
+        
         
         FriendSystem.system.addFriendObserver {
             self.tableView.reloadData()
@@ -215,12 +252,15 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
         
         
         
-        //gallery.dataSource = self
+        gallery.dataSource = self
         gallery.delegate = self
-        photos = Photos()
+        
+      
 
         
         let user = usersArray[pageIndex]
+        
+        //print(user.userId!)
         
             let imageUrl = URL(string: user.profileImageUrl!)!
             self.userProfileImage.kf.indicatorType = .activity
@@ -257,6 +297,10 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
         //view.addSubview(SPB)
        // view.bringSubviewToFront(SPB)
         
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPress(gesture:)))
+           longPress.minimumPressDuration = 0.5
+           self.blockBTN.addGestureRecognizer(longPress)
+        
         let tapGestureImage = UITapGestureRecognizer(target: self, action: #selector(self.tapOn(_:)))
         tapGestureImage.numberOfTapsRequired = 1
         tapGestureImage.numberOfTouchesRequired = 1
@@ -267,11 +311,76 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
         tapGestureVideo.numberOfTouchesRequired = 1
         videoView.addGestureRecognizer(tapGestureVideo)
         
-        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(dragged(gestureRecognizer:)))
+        popOver.isUserInteractionEnabled = true
+        popOver.addGestureRecognizer(panGesture)
         
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(wasDragged(gestureRecognizer:)))
         imagePreview.addGestureRecognizer(gesture)
+        
+       
+
     }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 3
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(
+            width: (view.frame.width/3) - 3,
+            height: (view.frame.width/3) - 3
+
+    )}
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
+    }
+    
+    
+    @objc func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return images.count
+}
+
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let photoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileCell", for: indexPath) as! ProfileCollectionViewCell
+
+        photoCell.image = images[indexPath.row]
+
+        photoCell.layer.cornerRadius = 7
+        
+        photoCell.contentView.isUserInteractionEnabled = false
+
+
+        
+        return photoCell
+    }
+    
+    
+     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        //gallery.deselectItem(at: indexPath, animated: true)
+        
+        selectedImage =  images[indexPath.row]
+        
+        performSegue(withIdentifier: Storyboard.showDetailVC, sender: nil)
+        
+
+        print("You Tapped Me")
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        if segue.identifier == Storyboard.showDetailVC {
+            let detailVC = segue.destination as! DetailViewController
+            detailVC.image = selectedImage
+        }
+    }
+    
     
     
     
@@ -395,11 +504,12 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
                     self.animationView?.play()
                     self.animationView?.play { (finished) in
                         
-                        self.dismiss(animated: true, completion: nil)
 
                         self.animationView?.removeFromSuperview()
                     }
                 })
+                self.dismiss(animated: true, completion: nil)
+
                 return
             }
             
@@ -419,10 +529,12 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
                     self.animationView?.play()
                     self.animationView?.play { (finished) in
                         
-                        self.dismiss(animated: true, completion: nil)
 
                         self.animationView?.removeFromSuperview()
                     }
+                    
+                    self.dismiss(animated: true, completion: nil)
+
                     
                 })
                 
@@ -665,48 +777,54 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
     }
     
     
+    
+    
     @IBAction func menuBTN(_ sender: Any) {
         
 
         
-        UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 8, options: [], //options: nil
+        UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 3, options: [], //options: nil
             animations: ({
+            
+            
 
                 self.visualEffectView.alpha = 0.9
                 self.view.addSubview(self.popOver)
                 self.popOver.center.y = self.view.frame.width / 3
 
-                self.popOver.frame = CGRect(x: 0, y: 155, width: self.popOver.frame.size.width, height: self.popOver.frame.size.height )
-
+                self.popOver.frame = CGRect(x: 0, y: 60, width: self.popOver.frame.size.width, height: self.popOver.frame.size.height )
+            
+                
 
             }), completion: nil)
 
       
-//
-//        UIView.animate(withDuration: 0.3,
-//                       delay: 0.7, usingSpringWithDamping: 1.0,
-//                       initialSpringVelocity: 0.2,
-//                       options: .curveEaseIn,  //options: nil
-//            animations: ({
-//
-//                self.visualEffectView.alpha = 0.9
-//                self.view.addSubview(self.popOver)
-//
-//                self.popOver.translatesAutoresizingMaskIntoConstraints = false
-//
-//
-//                self.popOver.topAnchor.constraint(equalTo: self.view.topAnchor, constant:80).isActive = true
-//
-//                self.popOver.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-//
-//                self.popOver.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-//
-//                self.popOver.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-//
-//
-//            }), completion: nil)
     }
     
+    @IBAction func yesBTN(_ sender: Any) {
+        
+        
+        
+        let matchedUser = usersArray[pageIndex]
+        Helper.Pholio.matchedUser = matchedUser
+                                        
+        
+    ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("User-Incidents").child("Blocked-Users").child("Blocked").child(matchedUser.userId!).setValue(true)
+        
+       
+        self.animationView?.removeFromSuperview()
+self.dismiss(animated: true, completion: nil)
+        
+      
+    }
+    
+    
+    @IBAction func noBTN(_ sender: Any) {
+
+        self.animationView?.removeFromSuperview()
+self.dismiss(animated: true, completion: nil)
+        
+    }
     
     
     
@@ -721,10 +839,9 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
         
         
         ref.child("followers").child(matchedUser.userId!).child(currentUserId).setValue(true)
-
-
-        
     }
+    
+    
     
     
     //MARK: - Button actions
@@ -745,70 +862,40 @@ class ProfileVC: UIViewController,  SegmentedProgressBarDelegate {
     }
     
     
-    
+    @objc func longPress(gesture: UILongPressGestureRecognizer) {
+        if gesture.state == UIGestureRecognizer.State.began {
+            
+            
+            let animation = CABasicAnimation(keyPath: "position")
+            animation.duration = 0.07
+            animation.repeatCount = 4
+            animation.autoreverses = true
+            animation.fromValue = NSValue(cgPoint: CGPoint(x: self.profileImage.center.x - 10, y: profileImage.center.y))
+            animation.toValue = NSValue(cgPoint: CGPoint(x: profileImage.center.x + 10, y: profileImage.center.y))
+            profileImage.layer.add(animation, forKey: "position")
+            
+            
+            UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 3, options: [], //options: nil
+                animations: ({
+
+                    self.visualEffectView.alpha = 0.9
+                    self.view.addSubview(self.popUPView)
+                    self.popUPView.center.y = self.view.frame.width / 3
+                self.popUPView.center = self.view.center
+
+                }), completion: nil)
+         
+            
+            print("Long Press")
+        }
+    }
+
     
 
     
 }
 
-extension ProfileVC: UICollectionViewDataSource {
-
-
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photos.photoArray.count
-}
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let photoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileCell", for: indexPath) as! ProfileCollectionViewCell
-
-        photoCell.spot = spot
-        photoCell.photo = photos.photoArray[indexPath.row]
-        return photoCell
-    }
-}
-
-extension ProfileVC: UICollectionViewDelegateFlowLayout {
     
-   
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 2
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(
-            width: (view.frame.width/3) - 3,
-            height: (view.frame.width/3) - 3
-
-    )}
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
-    }
-    
-    
-    
-}
-    
-    
-
-extension ProfileVC: UICollectionViewDelegate {
-    
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        collectionView.deselectItem(at: indexPath, animated: true)
-        print("You Tapped Me")
-    }
-    
-
-    
-}
-
 
 
 
@@ -818,6 +905,8 @@ extension ProfileVC: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
+    
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return usersArray.index(after: 0)
@@ -840,69 +929,74 @@ extension ProfileVC: UITableViewDataSource {
         
         cell!.setFunction {
             
+            let VC1 = self.storyboard!.instantiateViewController(withIdentifier: "PhotoShootTableVC") as! PhotoShootTableVC
+            let navController = UINavigationController(rootViewController: VC1)
+            navController.modalPresentationStyle = .fullScreen
+
+            self.present(navController, animated:true, completion: nil)
+
+            
             print("Interested")
             
-            let matchedUser = self.usersArray[self.pageIndex]
-            Helper.Pholio.matchedUser = matchedUser
-            
-            guard let currentUserId = Auth.auth().currentUser?.uid else { return }
-            
-            DBService.shared.refreshUser(userId: matchedUser.userId!) { (updatedUser) in
-                
-                let matched = updatedUser.matchedUsers[currentUserId] as? Bool
-                
-                if matched == true {
-                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
-                    DBService.shared.currentUser.child("Matched").child(matchedUser.userId!).setValue(matchedUser.userId!)
-                    
-                } else if matched == false {
-                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
-                    DBService.shared.users.child(matchedUser.userId!).child("Matched-Users").child(currentUserId).setValue(true)
-                    
-                } else {
-                    // Not matched yet
-                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(false)
-               
-                    let user = self.usersArray[self.pageIndex].userId
-                    
-                    self.sendRequestToUser(user!)
-                    
-                    print("Request Sent")
-                    
-                    self.popOver.removeFromSuperview()
-                    
-                    UIView.animate(withDuration: 0.3, animations: {
-                        self.imagePreview.center = CGPoint(x:  self.imagePreview.center.x + 100, y:  self.imagePreview.center.y + 100)
-                        self.imagePreview.alpha = 0
-                        self.animationView = .init(name: "checkmark")
-                        self.animationView!.contentMode = .scaleAspectFit
-                    self.animationView?.frame = self.view.bounds
-                        self.view.addSubview(self.animationView!)
-                        self.animationView?.play()
-                        self.animationView?.play { (finished) in
-                            
-                            self.dismiss(animated: true, completion: nil)
+//            let matchedUser = self.usersArray[self.pageIndex]
+//            Helper.Pholio.matchedUser = matchedUser
+//
+//            guard let currentUserId = Auth.auth().currentUser?.uid else { return }
+//
+//            DBService.shared.refreshUser(userId: matchedUser.userId!) { (updatedUser) in
+//
+//                let matched = updatedUser.matchedUsers[currentUserId] as? Bool
+//
+//                if matched == true {
+//                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
+//                    DBService.shared.currentUser.child("Matched").child(matchedUser.userId!).setValue(matchedUser.userId!)
+//
+//                } else if matched == false {
+//                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
+//                    DBService.shared.users.child(matchedUser.userId!).child("Matched-Users").child(currentUserId).setValue(true)
+//
+//                } else {
+//                    // Not matched yet
+//                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(false)
+//
+//                    let user = self.usersArray[self.pageIndex].userId
+//
+//                    self.sendRequestToUser(user!)
+//
+//                    print("Request Sent")
+//
+//                    self.popOver.removeFromSuperview()
+//
+//                    UIView.animate(withDuration: 0.3, animations: {
+//                        self.imagePreview.center = CGPoint(x:  self.imagePreview.center.x + 100, y:  self.imagePreview.center.y + 100)
+//                        self.imagePreview.alpha = 0
+//                        self.animationView = .init(name: "checkmark")
+//                        self.animationView!.contentMode = .scaleAspectFit
+//                    self.animationView?.frame = self.view.bounds
+//                        self.view.addSubview(self.animationView!)
+//                        self.animationView?.play()
+//                        self.animationView?.play { (finished) in
+//
+//                            self.dismiss(animated: true, completion: nil)
+//
+//                            self.animationView?.removeFromSuperview()
+//                        }
+//
+//                    })
+//
 
-                            self.animationView?.removeFromSuperview()
-                        }
-                        
-                    })
-                    
-                    
-                    
-                    
-                    
                     //let id = FriendSystem.system.userList[indexPath.row].id
                     //FriendSystem.system.sendRequestToUser(id!)
-                }
-            }
+//                }
+//            }
+            
+            
         }
-        
         
         
         // Return cell
         return cell!
     }
-    
 }
+
 

@@ -29,6 +29,7 @@ import CryptoKit
 
 
 
+
 class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     
@@ -87,6 +88,10 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     @IBOutlet var orBTN: UILabel!
     
+    @IBOutlet weak var newLogo: UIImageView!
+    @IBOutlet weak var Logo: UIImageView!
+    
+    
     var imagePicker:UIImagePickerController!
     var selectedImage: UIImage!
     let validator = Validator()
@@ -132,6 +137,8 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     override func viewDidLoad() {
         
         
+        
+        
         let button = UIButton(type: .custom)
         //set image for button
         button.setImage(UIImage(named: "back"), for: .normal)
@@ -151,7 +158,35 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         
         
         
-        
+        DispatchQueue.main.async {
+            
+           // let token: [String: AnyObject] = [Messaging.messaging().fcmToken!: Messaging.messaging().fcmToken as AnyObject]
+
+            
+    if Auth.auth().currentUser != nil {
+       DBService.shared.users.child(Auth.auth().currentUser!.uid).child("Yes").observeSingleEvent(of: .value, with: { (snapshot) in
+            print(snapshot)
+            
+        if snapshot.exists(){
+               print("User Signed In")
+            
+    //    self.postToken(Token: token)
+            
+           // self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("notificationTokens").updateChildValues(token)
+
+
+               self.performSegue(withIdentifier: "homepageVC", sender: nil)
+                
+           } else {
+               Auth.auth().currentUser?.delete(completion: nil)
+                print("User Didn't Complete Sign In")
+
+            }
+                    })
+                }
+            }
+
+    
         Auth.auth().addStateDidChangeListener { (auth, user) in
             
             if Auth.auth().currentUser != nil
@@ -166,7 +201,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
             }
         }
         
-        setupSignInButton()
+        //setupSignInButton()
         
         
         var signInWithFbButton: UIButton {
@@ -207,6 +242,117 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
             
             return myLoginButton
         }
+        
+        switch UIDevice().type {
+
+
+        case .iPhoneSE:
+
+
+        newLogo.frame = CGRect(x: 115, y: 97, width: 100, height: 100)
+
+        Logo.frame = CGRect(x: 83, y: 64, width: 165, height: 165)
+
+        case .iPhone5S:
+
+            newLogo.frame = CGRect(x: 115, y: 97, width: 100, height: 100)
+
+            Logo.frame = CGRect(x: 83, y: 64, width: 165, height: 165)
+
+        case .iPhone7Plus:
+
+            newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
+
+        Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
+
+
+        case .iPhone8Plus:
+
+            newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
+
+        Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
+
+        case .iPhoneXR:
+
+        newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
+
+        Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
+
+
+        case .iPhoneXS:
+            
+            newLogo.frame = CGRect(x: 116, y: 137, width: 145, height: 145)
+
+            Logo.frame = CGRect(x: 83, y: 104, width: 210, height: 210)
+            
+        case .iPhoneXSMax:
+
+            newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
+
+            Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
+            
+        case .iPhone11Pro:
+            
+            newLogo.frame = CGRect(x: 103, y: 120, width: 170, height: 170)
+
+            Logo.frame = CGRect(x: 63, y: 80, width: 250, height: 250)
+            
+        case .iPhone11ProMax:
+            newLogo.frame = CGRect(x: 100, y: 137, width: 220, height: 220)
+
+            Logo.frame = CGRect(x: 44, y: 82, width: 330, height: 330)
+      
+        case .iPhone12:
+            newLogo.frame = CGRect(x: 110, y: 140, width: 170, height: 170)
+
+            Logo.frame = CGRect(x: 70, y: 100, width: 250, height: 250)
+            
+        case .iPhone12Pro:
+            
+            newLogo.frame = CGRect(x: 110, y: 140, width: 170, height: 170)
+
+            Logo.frame = CGRect(x: 70, y: 100, width: 250, height: 250)
+            
+        case .iPhone12ProMax:
+            
+            newLogo.frame = CGRect(x: 110, y: 137, width: 220, height: 220)
+
+            Logo.frame = CGRect(x: 54, y: 84, width: 330, height: 330)
+            
+        case .iPhone12Mini:
+            
+            newLogo.frame = CGRect(x: 116, y: 137, width: 145, height: 145)
+
+            Logo.frame = CGRect(x: 83, y: 104, width: 210, height: 210)
+            
+            
+        case .iPhone13Mini:
+
+            newLogo.frame = CGRect(x: 110, y: 140, width: 170, height: 170)
+
+            Logo.frame = CGRect(x: 70, y: 100, width: 250, height: 250)
+            
+        case .iPhoneSE3:
+            
+            
+            newLogo.frame = CGRect(x: 115, y: 97, width: 100, height: 100)
+
+            Logo.frame = CGRect(x: 83, y: 64, width: 165, height: 165)
+            
+            
+            
+
+        default:break
+        }
+        
+        
+        self.Logo.layer.cornerRadius = self.Logo.frame.size.height / 2
+      self.newLogo.layer.cornerRadius = self.Logo.frame.size.height / 2
+
+       self.Logo.layer.shadowColor = UIColor.black.cgColor
+       self.Logo.layer.shadowRadius = 9
+       self.Logo.layer.shadowOpacity = 1.5
+      self.Logo.layer.shadowOffset = CGSize(width: 2, height: 2)
         // Add the FACEBOOK button to the view
         //view.addSubview(signInWithFbButton)
         
@@ -360,7 +506,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        email.becomeFirstResponder()
+        //email.becomeFirstResponder()
         
         
         NotificationCenter.default.addObserver(self, selector:#selector(keyboardWillChange), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -421,12 +567,107 @@ class SignUpVC: UIViewController, UITextFieldDelegate, ValidationDelegate {
         self.view.addSubview(signInButton)
         
         
-        NSLayoutConstraint.activate([
-            signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -300),
-                   signInButton.heightAnchor.constraint(equalToConstant: 45),
-                   signInButton.widthAnchor.constraint(equalToConstant: 250)
-               ])
+        switch UIDevice().type {
+            
+        case .iPad9:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -85),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadAir4:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -85),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadPro9_7:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -85),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadPro3_11:
+            
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -85),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadPro5_12_9:
+            
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -85),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadMini6:
+
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -85),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+            
+        case .iPhone6S:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -85),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPhone6SPlus:
+
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -85),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPhone11:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -125),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 250)
+                   ])
+    
+        default:
+            
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -125),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 250)
+                   ])
+        }
+
+        
+       
     }
     
     @objc func handleSignWithAppleTapped() {
@@ -967,6 +1208,9 @@ extension SignUpVC: ASAuthorizationControllerDelegate {
       let credential = OAuthProvider.credential(withProviderID: "apple.com",
                                                 idToken: idTokenString,
                                                 rawNonce: nonce)
+        
+        let token: [String: AnyObject] = [Messaging.messaging().fcmToken!: Messaging.messaging().fcmToken as AnyObject]
+
       // Sign in with Firebase.
       Auth.auth().signIn(with: credential) { (authResult, error) in
         if (error != nil) {
@@ -980,7 +1224,10 @@ extension SignUpVC: ASAuthorizationControllerDelegate {
         // ...
         
         self.performSegue(withIdentifier: "toEditProfile", sender: nil)
-        print("Successfully logged into Firebase")
+          
+          self.postToken(Token: token)
+          self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("Gateway Arch")
+          print("Successfully logged into Firebase")
       }
     }
   }

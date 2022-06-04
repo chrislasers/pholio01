@@ -59,8 +59,6 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
 
                 self.visualEffectView.alpha = 0.9
                 self.view.addSubview(self.popOver)
-                self.popOver.center.y = self.view.frame.width / 3
-
                 self.popOver.center = self.view.center
 
 
@@ -305,11 +303,12 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
                     self.animationView?.play()
                     self.animationView?.play { (finished) in
                         
-                        self.dismiss(animated: true, completion: nil)
 
                         self.animationView?.removeFromSuperview()
                     }
                 })
+                self.dismiss(animated: true, completion: nil)
+
                 return
             }
             
@@ -321,7 +320,8 @@ class PreViewController: UIViewController, SegmentedProgressBarDelegate {
                     self.imagePreview.center = CGPoint(x:  self.imagePreview.center.x + 100, y:  self.imagePreview.center.y + 100)
                     self.imagePreview.alpha = 0
                     
-                    
+                    self.dismiss(animated: true, completion: nil)
+
                     self.animationView = .init(name: "thumbsup")
                     self.animationView!.contentMode = .scaleAspectFit
                 self.animationView?.frame = self.view.bounds

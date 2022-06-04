@@ -26,24 +26,15 @@ class ProfileCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var profileImage: UIImageView!
     
     
-    var spot: Spot!
-    var photo: Photo! {
+    
+    
+    var image: UIImage? {
+        
         didSet {
-            if let url = URL(string: self.photo.photoURL) {
-                self.profileImage.sd_imageTransition = .fade
-                self.profileImage.sd_imageTransition?.duration = 0.2
-                self.profileImage.sd_setImage(with: url)
-            } else {
-                print("URL Didn't work \(self.photo.photoURL)")
-                self.photo.loadImage(spot: self.spot) { (success) in
-                    self.photo.saveData(spot: self.spot) { (success) in
-                        print("image updated with URL \(self.photo.photoURL)")
-                    }
-                }
-            }
+            guard let image = image else { return }
+            profileImage.image = image
         }
     }
-    
     
     
 

@@ -30,6 +30,8 @@ import UICircularProgressRing
 import Lottie
 import AuthenticationServices
 import CryptoKit
+import AppTrackingTransparency
+import AdSupport
 
 public enum Model : String {
 
@@ -42,6 +44,8 @@ iPod2              = "iPod 2",
 iPod3              = "iPod 3",
 iPod4              = "iPod 4",
 iPod5              = "iPod 5",
+iPod6              = "iPod 6",
+iPod7              = "iPod 7",
 
 //iPad
 iPad2              = "iPad 2",
@@ -51,10 +55,12 @@ iPadAir            = "iPad Air ",
 iPadAir2           = "iPad Air 2",
 iPadAir3           = "iPad Air 3",
 iPadAir4           = "iPad Air 4",
+iPadAir5           = "iPad Air 5",
 iPad5              = "iPad 5", //iPad 2017
 iPad6              = "iPad 6", //iPad 2018
 iPad7              = "iPad 7", //iPad 2019
 iPad8              = "iPad 8", //iPad 2020
+iPad9              = "iPad 9", //iPad 2021
 
 //iPad Mini
 iPadMini           = "iPad Mini",
@@ -62,16 +68,19 @@ iPadMini2          = "iPad Mini 2",
 iPadMini3          = "iPad Mini 3",
 iPadMini4          = "iPad Mini 4",
 iPadMini5          = "iPad Mini 5",
+iPadMini6          = "iPad Mini 6",
 
 //iPad Pro
 iPadPro9_7         = "iPad Pro 9.7\"",
 iPadPro10_5        = "iPad Pro 10.5\"",
 iPadPro11          = "iPad Pro 11\"",
 iPadPro2_11        = "iPad Pro 11\" 2nd gen",
+iPadPro3_11        = "iPad Pro 11\" 3rd gen",
 iPadPro12_9        = "iPad Pro 12.9\"",
 iPadPro2_12_9      = "iPad Pro 2 12.9\"",
 iPadPro3_12_9      = "iPad Pro 3 12.9\"",
 iPadPro4_12_9      = "iPad Pro 4 12.9\"",
+iPadPro5_12_9      = "iPad Pro 5 12.9\"",
 
 //iPhone
 iPhone4            = "iPhone 4",
@@ -100,10 +109,31 @@ iPhone12Mini       = "iPhone 12 Mini",
 iPhone12           = "iPhone 12",
 iPhone12Pro        = "iPhone 12 Pro",
 iPhone12ProMax     = "iPhone 12 Pro Max",
+iPhone13Mini       = "iPhone 13 Mini",
+iPhone13           = "iPhone 13",
+iPhone13Pro        = "iPhone 13 Pro",
+iPhone13ProMax     = "iPhone 13 Pro Max",
+iPhoneSE3          = "iPhone SE 3nd gen",
+
+// Apple Watch
+AppleWatch1         = "Apple Watch 1gen",
+AppleWatchS1        = "Apple Watch Series 1",
+AppleWatchS2        = "Apple Watch Series 2",
+AppleWatchS3        = "Apple Watch Series 3",
+AppleWatchS4        = "Apple Watch Series 4",
+AppleWatchS5        = "Apple Watch Series 5",
+AppleWatchSE        = "Apple Watch Special Edition",
+AppleWatchS6        = "Apple Watch Series 6",
+AppleWatchS7        = "Apple Watch Series 7",
 
 //Apple TV
-AppleTV            = "Apple TV",
+AppleTV1           = "Apple TV 1gen",
+AppleTV2           = "Apple TV 2gen",
+AppleTV3           = "Apple TV 3gen",
+AppleTV4           = "Apple TV 4gen",
 AppleTV_4K         = "Apple TV 4K",
+AppleTV2_4K        = "Apple TV 4K 2gen",
+
 unrecognized       = "?unrecognized?"
 }
 
@@ -166,6 +196,15 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         return hud
     }()
     
+    
+    let visualEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .light)
+        let view = UIVisualEffectView(effect: blurEffect)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    
     var ref : DatabaseReference!
     let userID = Auth.auth().currentUser?.uid
     let validator = Validator()
@@ -201,6 +240,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
     @IBOutlet var forgetPassword: UIButton!
     
 
+    @IBOutlet var popOver: UIView!
     @IBOutlet var newLogo: UIImageView!
     
     
@@ -210,6 +250,8 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         
         super.viewDidLoad()
         
+        
+        
        ///Login With FaceID
 //
 //        let myButton = UIButton(frame: CGRect(x: 165, y: 743, width: 50, height: 50))
@@ -218,10 +260,42 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
 //           myButton.addTarget(self, action: #selector(loginWithBiometricAuth), for: .touchUpInside)
 //           self.view.addSubview(myButton)
         
+        func requestPermission() {
+           if #available(iOS 14, *) {
+               ATTrackingManager.requestTrackingAuthorization { status in
+                   switch status {
+                   case .authorized:
+                       // Tracking authorization dialog was shown
+                       // and we are authorized
+                       print("Authorized")
+                       
+                       // Now that we are authorized we can get the IDFA
+                       print(ASIdentifierManager.shared().advertisingIdentifier)
+                   case .denied:
+                       // Tracking authorization dialog was
+                       // shown and permission is denied
+                       print("Denied")
+                   case .notDetermined:
+                       // Tracking authorization dialog has not been shown
+                       print("Not Determined")
+                   case .restricted:
+                       print("Restricted")
+                   @unknown default:
+                       print("Unknown")
+                   }
+               }
+           } else {
+               // Fallback on earlier versions
+           }
+       }
+      
+        
          ref = Database.database().reference()
         
+        //performExistingAccountSetupFlows()
         
-        setupSignInButton()
+
+        //setupSignInButton()
 
         
         var signInWithFbButton: UIButton {
@@ -309,14 +383,58 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         //view.addSubview(signInWithFbButton)
 
         switch UIDevice().type {
+            
+        case .iPad9:
+            
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
 
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
 
+        case .iPadAir4:
+            
+            
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
+            
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
+            
+        case .iPadPro9_7:
+            
+            
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
+            
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
+            
+        case .iPadPro3_11:
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
+            
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
+
+        case .iPadPro5_12_9:
+            
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
+            
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
+
+        case .iPadMini6:
+            
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
+            
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
+
+    
         case .iPhoneSE:
+            
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
 
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
 
-        newLogo.frame = CGRect(x: 115, y: 97, width: 100, height: 100)
+            
+        case .iPhoneSE2:
+            
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
 
-        Logo.frame = CGRect(x: 83, y: 64, width: 165, height: 165)
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
+
 
         case .iPhone5S:
 
@@ -328,20 +446,25 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
 
             newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
 
-        Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
+            Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
+            
+        case .iPhone8:
 
+            newLogo.frame = CGRect(x: 123, y: 97, width: 135, height: 135)
+
+            Logo.frame = CGRect(x: 90, y: 64, width: 200, height: 200)
 
         case .iPhone8Plus:
 
             newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
 
-        Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
+            Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
 
         case .iPhoneXR:
 
-        newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
+            newLogo.frame = CGRect(x: 136, y: 97, width: 145, height: 145)
 
-        Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
+            Logo.frame = CGRect(x: 103, y: 64, width: 210, height: 210)
 
 
         case .iPhoneXS:
@@ -380,9 +503,9 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             
         case .iPhone12ProMax:
             
-            newLogo.frame = CGRect(x: 110, y: 137, width: 220, height: 220)
+            newLogo.frame = CGRect(x: 110, y: 147, width: 220, height: 220)
 
-            Logo.frame = CGRect(x: 54, y: 84, width: 330, height: 330)
+            Logo.frame = CGRect(x: 54, y: 94, width: 330, height: 330)
             
         case .iPhone12Mini:
             
@@ -390,8 +513,26 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
 
             Logo.frame = CGRect(x: 83, y: 104, width: 210, height: 210)
             
+        case .iPhone13Mini:
 
-        default:break
+            newLogo.frame = CGRect(x: 110, y: 140, width: 170, height: 170)
+
+            Logo.frame = CGRect(x: 70, y: 100, width: 250, height: 250)
+            
+        case .iPod7:
+            
+            newLogo.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+            
+            Logo.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+            
+            
+
+        default:
+            
+            newLogo.frame = CGRect(x: 123, y: 77, width: 135, height: 135)
+            
+            Logo.frame = CGRect(x: 90, y: 44, width: 200, height: 200)
+
         }
 
     
@@ -566,18 +707,125 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         signInButton.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(signInButton)
         
+        switch UIDevice().type {
+            
+        case .iPad9:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadAir5:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadPro9_7:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadPro3_11:
+            
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadPro5_12_9:
+            
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPadMini6:
+
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPhone6S:
+            
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+
+
+            
+        case .iPhone8:
+
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+            
+        case .iPod7:
+            
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -15),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+
+            
+        case .iPhoneSE3:
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -30),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+
+        default:
+            
+            
+            NSLayoutConstraint.activate([
+                signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -70),
+                       signInButton.heightAnchor.constraint(equalToConstant: 45),
+                       signInButton.widthAnchor.constraint(equalToConstant: 280)
+                   ])
+        }
+
         
-        NSLayoutConstraint.activate([
-            signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            signInButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -70),
-                   signInButton.heightAnchor.constraint(equalToConstant: 45),
-                   signInButton.widthAnchor.constraint(equalToConstant: 280)
-               ])
+      
     }
     
     @objc func handleSignWithAppleTapped() {
         performSignIn()
     }
+
     
     func performSignIn() {
         
@@ -600,6 +848,17 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         currentNonce = nonce
         
         return request
+    }
+    
+    private func performExistingAccountSetupFlows() {
+        // Prepare requests for both Apple ID and password providers.
+        let requests = [ASAuthorizationAppleIDProvider().createRequest(), ASAuthorizationPasswordProvider().createRequest()]
+        
+        // Create an authorization controller with the given requests.
+        let authorizationController = ASAuthorizationController(authorizationRequests: requests)
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
     }
     
     
@@ -1060,7 +1319,7 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
         //signUp.layer.borderWidth = 1.6
         
         //signUp.layer.borderColor = UIColor.white.cgColor
-        
+         
         
         signUp.layer.borderColor = UIColor.white.withAlphaComponent(0.12).cgColor
         signUp.layer.borderWidth = 1.5
@@ -1099,8 +1358,23 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-            
+        
             DispatchQueue.main.async {
+                
+                UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 3, options: [], //options: nil
+                    animations: ({
+
+                        self.visualEffectView.alpha = 0.9
+                        self.view.addSubview(self.popOver)
+                        self.popOver.center.y = self.view.frame.width / 2
+
+                        self.popOver.frame = CGRect(x: 0, y: 60, width: self.view.frame.size.width, height: self.view.frame.size.height )
+                    }), completion: nil)
+                
+                
+                
+               // let token: [String: AnyObject] = [Messaging.messaging().fcmToken!: Messaging.messaging().fcmToken as AnyObject]
+                
                 
         if Auth.auth().currentUser != nil {
            DBService.shared.users.child(Auth.auth().currentUser!.uid).child("Yes").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -1108,13 +1382,21 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
                 
             if snapshot.exists(){
                    print("User Signed In")
+                
+        //    self.postToken(Token: token)
+               //p;il  =-=-0v9self.ref.child("Users").child((Auth.auth().currentUser?.uid)!).child("notificationTokens").updateChildValues(token)
+
+
                    self.performSegue(withIdentifier: "homepageVC", sender: nil)
                     
                } else {
+                   
                    Auth.auth().currentUser?.delete(completion: nil)
+                   
                     print("User Didn't Complete Sign In")
 
                 }
+               
                         })
                     }
                 }
@@ -1419,8 +1701,34 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
     
     @IBAction func canclePressed(_ sender: Any) {
         
-        dismiss(animated: true, completion: nil)
         
+        UIView.animate(withDuration: 0.5, animations: {
+            self.visualEffectView.alpha = 0
+            self.popOver.alpha = 0
+            self.popOver.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { (_) in
+            
+            self.dismiss(animated: true, completion: nil)
+
+            self.popOver.removeFromSuperview()
+            print("Did remove pop up window..")
+        }
+    }
+    
+    
+    @IBAction func agreePressed(_ sender: Any) {
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            self.visualEffectView.alpha = 0
+            self.popOver.alpha = 0
+            self.popOver.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { (_) in
+            
+            self.dismiss(animated: true, completion: nil)
+
+            self.popOver.removeFromSuperview()
+            print("Did remove pop up window..")
+        }
     }
     
     
@@ -1462,6 +1770,8 @@ class SignInVC: UIViewController, UITextFieldDelegate, MessagingDelegate, Valida
             })
         }))
     }
+    
+    
     
     
     @IBAction func signUpPRESSED(_ sender: Any) {
@@ -1678,40 +1988,53 @@ extension SignInVC: ASAuthorizationControllerPresentationContextProviding {
     
 extension SignInVC: ASAuthorizationControllerDelegate {
 
-  func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-    if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-      guard let nonce = currentNonce else {
-        fatalError("Invalid state: A login callback was received, but no login request was sent.")
-      }
-      guard let appleIDToken = appleIDCredential.identityToken else {
-        print("Unable to fetch identity token")
-        return
-      }
-      guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-        print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
-        return
-      }
-      // Initialize a Firebase credential.
-      let credential = OAuthProvider.credential(withProviderID: "apple.com",
-                                                idToken: idTokenString,
-                                                rawNonce: nonce)
-      // Sign in with Firebase.
-      Auth.auth().signIn(with: credential) { (authResult, error) in
-        if (error != nil) {
-          // Error. If error.code == .MissingOrInvalidNonce, make sure
-          // you're sending the SHA256-hashed nonce as a hex string with
-          // your request to Apple.
-            print(error?.localizedDescription)
-          return
-        }
-        // User is signed in to Firebase with Apple.
-        // ...
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         
-        self.performSegue(withIdentifier: "homepageVC", sender: nil)
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            
+            // Save authorised user ID for future reference
+            UserDefaults.standard.set(appleIDCredential.user, forKey: "appleAuthorizedUserIdKey")
+            
+            // Retrieve the secure nonce generated during Apple sign in
+            guard let nonce = self.currentNonce else {
+                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+            }
 
-      }
+            // Retrieve Apple identity token
+            guard let appleIDToken = appleIDCredential.identityToken else {
+                print("Failed to fetch identity token")
+                return
+            }
+
+            // Convert Apple identity token to string
+            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                print("Failed to decode identity token")
+                return
+            }
+
+            // Initialize a Firebase credential using secure nonce and Apple identity token
+            let firebaseCredential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                              idToken: idTokenString,
+                                                              rawNonce: nonce)
+                
+            // Sign in with Firebase
+            Auth.auth().signIn(with: firebaseCredential) { (authResult, error) in
+                
+                if let error = error {
+                    
+                    self.performSegue(withIdentifier: "homepageVC", sender: self)
+
+                    print(error.localizedDescription)
+                    return
+                }
+                
+                self.performSegue(withIdentifier: "showSignUp", sender: nil)
+                print("SignUpCLciked")
+              
+            }
+            
+        }
     }
-  }
 }
 
   func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
@@ -1720,154 +2043,209 @@ extension SignInVC: ASAuthorizationControllerDelegate {
   }
 
 public extension UIDevice {
-
-var type: Model {
-    var systemInfo = utsname()
-    uname(&systemInfo)
-    let modelCode = withUnsafePointer(to: &systemInfo.machine) {
-        $0.withMemoryRebound(to: CChar.self, capacity: 1) {
-            ptr in String.init(validatingUTF8: ptr)
-        }
-    }
-
-    let modelMap : [String: Model] = [
-
-        //Simulator
-        "i386"      : .simulator,
-        "x86_64"    : .simulator,
-
-        //iPod
-        "iPod1,1"   : .iPod1,
-        "iPod2,1"   : .iPod2,
-        "iPod3,1"   : .iPod3,
-        "iPod4,1"   : .iPod4,
-        "iPod5,1"   : .iPod5,
-
-        //iPad
-        "iPad2,1"   : .iPad2,
-        "iPad2,2"   : .iPad2,
-        "iPad2,3"   : .iPad2,
-        "iPad2,4"   : .iPad2,
-        "iPad3,1"   : .iPad3,
-        "iPad3,2"   : .iPad3,
-        "iPad3,3"   : .iPad3,
-        "iPad3,4"   : .iPad4,
-        "iPad3,5"   : .iPad4,
-        "iPad3,6"   : .iPad4,
-        "iPad6,11"  : .iPad5, //iPad 2017
-        "iPad6,12"  : .iPad5,
-        "iPad7,5"   : .iPad6, //iPad 2018
-        "iPad7,6"   : .iPad6,
-        "iPad7,11"  : .iPad7, //iPad 2019
-        "iPad7,12"  : .iPad7,
-        "iPad11,6"  : .iPad8, //iPad 2020
-        "iPad11,7"  : .iPad8,
-
-        //iPad Mini
-        "iPad2,5"   : .iPadMini,
-        "iPad2,6"   : .iPadMini,
-        "iPad2,7"   : .iPadMini,
-        "iPad4,4"   : .iPadMini2,
-        "iPad4,5"   : .iPadMini2,
-        "iPad4,6"   : .iPadMini2,
-        "iPad4,7"   : .iPadMini3,
-        "iPad4,8"   : .iPadMini3,
-        "iPad4,9"   : .iPadMini3,
-        "iPad5,1"   : .iPadMini4,
-        "iPad5,2"   : .iPadMini4,
-        "iPad11,1"  : .iPadMini5,
-        "iPad11,2"  : .iPadMini5,
-
-        //iPad Pro
-        "iPad6,3"   : .iPadPro9_7,
-        "iPad6,4"   : .iPadPro9_7,
-        "iPad7,3"   : .iPadPro10_5,
-        "iPad7,4"   : .iPadPro10_5,
-        "iPad6,7"   : .iPadPro12_9,
-        "iPad6,8"   : .iPadPro12_9,
-        "iPad7,1"   : .iPadPro2_12_9,
-        "iPad7,2"   : .iPadPro2_12_9,
-        "iPad8,1"   : .iPadPro11,
-        "iPad8,2"   : .iPadPro11,
-        "iPad8,3"   : .iPadPro11,
-        "iPad8,4"   : .iPadPro11,
-        "iPad8,9"   : .iPadPro2_11,
-        "iPad8,10"  : .iPadPro2_11,
-        "iPad8,5"   : .iPadPro3_12_9,
-        "iPad8,6"   : .iPadPro3_12_9,
-        "iPad8,7"   : .iPadPro3_12_9,
-        "iPad8,8"   : .iPadPro3_12_9,
-        "iPad8,11"  : .iPadPro4_12_9,
-        "iPad8,12"  : .iPadPro4_12_9,
-
-        //iPad Air
-        "iPad4,1"   : .iPadAir,
-        "iPad4,2"   : .iPadAir,
-        "iPad4,3"   : .iPadAir,
-        "iPad5,3"   : .iPadAir2,
-        "iPad5,4"   : .iPadAir2,
-        "iPad11,3"  : .iPadAir3,
-        "iPad11,4"  : .iPadAir3,
-        "iPad13,1"  : .iPadAir4,
-        "iPad13,2"  : .iPadAir4,
-        
-
-        //iPhone
-        "iPhone3,1" : .iPhone4,
-        "iPhone3,2" : .iPhone4,
-        "iPhone3,3" : .iPhone4,
-        "iPhone4,1" : .iPhone4S,
-        "iPhone5,1" : .iPhone5,
-        "iPhone5,2" : .iPhone5,
-        "iPhone5,3" : .iPhone5C,
-        "iPhone5,4" : .iPhone5C,
-        "iPhone6,1" : .iPhone5S,
-        "iPhone6,2" : .iPhone5S,
-        "iPhone7,1" : .iPhone6Plus,
-        "iPhone7,2" : .iPhone6,
-        "iPhone8,1" : .iPhone6S,
-        "iPhone8,2" : .iPhone6SPlus,
-        "iPhone8,4" : .iPhoneSE,
-        "iPhone9,1" : .iPhone7,
-        "iPhone9,3" : .iPhone7,
-        "iPhone9,2" : .iPhone7Plus,
-        "iPhone9,4" : .iPhone7Plus,
-        "iPhone10,1" : .iPhone8,
-        "iPhone10,4" : .iPhone8,
-        "iPhone10,2" : .iPhone8Plus,
-        "iPhone10,5" : .iPhone8Plus,
-        "iPhone10,3" : .iPhoneX,
-        "iPhone10,6" : .iPhoneX,
-        "iPhone11,2" : .iPhoneXS,
-        "iPhone11,4" : .iPhoneXSMax,
-        "iPhone11,6" : .iPhoneXSMax,
-        "iPhone11,8" : .iPhoneXR,
-        "iPhone12,1" : .iPhone11,
-        "iPhone12,3" : .iPhone11Pro,
-        "iPhone12,5" : .iPhone11ProMax,
-        "iPhone12,8" : .iPhoneSE2,
-        "iPhone13,1" : .iPhone12Mini,
-        "iPhone13,2" : .iPhone12,
-        "iPhone13,3" : .iPhone12Pro,
-        "iPhone13,4" : .iPhone12ProMax,
-
-        //Apple TV
-        "AppleTV5,3" : .AppleTV,
-        "AppleTV6,2" : .AppleTV_4K
-    ]
-
-    if let model = modelMap[String.init(validatingUTF8: modelCode!)!] {
-        if model == .simulator {
-            if let simModelCode = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] {
-                if let simModel = modelMap[String.init(validatingUTF8: simModelCode)!] {
-                    return simModel
-                }
-            }
-        }
-        return model
-    }
-    return Model.unrecognized
-  }
-}
+   
+   var type: Model {
+       var systemInfo = utsname()
+       uname(&systemInfo)
+       let modelCode = withUnsafePointer(to: &systemInfo.machine) {
+           $0.withMemoryRebound(to: CChar.self, capacity: 1) {
+               ptr in String.init(validatingUTF8: ptr)
+           }
+       }
+   
+       let modelMap : [String: Model] = [
+   
+           //Simulator
+           "i386"      : .simulator,
+           "x86_64"    : .simulator,
+   
+           //iPod
+           "iPod1,1"   : .iPod1,
+           "iPod2,1"   : .iPod2,
+           "iPod3,1"   : .iPod3,
+           "iPod4,1"   : .iPod4,
+           "iPod5,1"   : .iPod5,
+           "iPod7,1"   : .iPod6,
+           "iPod9,1"   : .iPod7,
+   
+           //iPad
+           "iPad2,1"   : .iPad2,
+           "iPad2,2"   : .iPad2,
+           "iPad2,3"   : .iPad2,
+           "iPad2,4"   : .iPad2,
+           "iPad3,1"   : .iPad3,
+           "iPad3,2"   : .iPad3,
+           "iPad3,3"   : .iPad3,
+           "iPad3,4"   : .iPad4,
+           "iPad3,5"   : .iPad4,
+           "iPad3,6"   : .iPad4,
+           "iPad6,11"  : .iPad5, //iPad 2017
+           "iPad6,12"  : .iPad5,
+           "iPad7,5"   : .iPad6, //iPad 2018
+           "iPad7,6"   : .iPad6,
+           "iPad7,11"  : .iPad7, //iPad 2019
+           "iPad7,12"  : .iPad7,
+           "iPad11,6"  : .iPad8, //iPad 2020
+           "iPad11,7"  : .iPad8,
+           "iPad12,1"  : .iPad9, //iPad 2021
+           "iPad12,2"  : .iPad9,
+   
+           //iPad Mini
+           "iPad2,5"   : .iPadMini,
+           "iPad2,6"   : .iPadMini,
+           "iPad2,7"   : .iPadMini,
+           "iPad4,4"   : .iPadMini2,
+           "iPad4,5"   : .iPadMini2,
+           "iPad4,6"   : .iPadMini2,
+           "iPad4,7"   : .iPadMini3,
+           "iPad4,8"   : .iPadMini3,
+           "iPad4,9"   : .iPadMini3,
+           "iPad5,1"   : .iPadMini4,
+           "iPad5,2"   : .iPadMini4,
+           "iPad11,1"  : .iPadMini5,
+           "iPad11,2"  : .iPadMini5,
+           "iPad14,1"  : .iPadMini6,
+           "iPad14,2"  : .iPadMini6,
+   
+           //iPad Pro
+           "iPad6,3"   : .iPadPro9_7,
+           "iPad6,4"   : .iPadPro9_7,
+           "iPad7,3"   : .iPadPro10_5,
+           "iPad7,4"   : .iPadPro10_5,
+           "iPad6,7"   : .iPadPro12_9,
+           "iPad6,8"   : .iPadPro12_9,
+           "iPad7,1"   : .iPadPro2_12_9,
+           "iPad7,2"   : .iPadPro2_12_9,
+           "iPad8,1"   : .iPadPro11,
+           "iPad8,2"   : .iPadPro11,
+           "iPad8,3"   : .iPadPro11,
+           "iPad8,4"   : .iPadPro11,
+           "iPad8,9"   : .iPadPro2_11,
+           "iPad8,10"  : .iPadPro2_11,
+           "iPad13,4"  : .iPadPro3_11,
+           "iPad13,5"  : .iPadPro3_11,
+           "iPad13,6"  : .iPadPro3_11,
+           "iPad13,7"  : .iPadPro3_11,
+           "iPad8,5"   : .iPadPro3_12_9,
+           "iPad8,6"   : .iPadPro3_12_9,
+           "iPad8,7"   : .iPadPro3_12_9,
+           "iPad8,8"   : .iPadPro3_12_9,
+           "iPad8,11"  : .iPadPro4_12_9,
+           "iPad8,12"  : .iPadPro4_12_9,
+           "iPad13,8"  : .iPadPro5_12_9,
+           "iPad13,9"  : .iPadPro5_12_9,
+           "iPad13,10" : .iPadPro5_12_9,
+           "iPad13,11" : .iPadPro5_12_9,
+   
+           //iPad Air
+           "iPad4,1"   : .iPadAir,
+           "iPad4,2"   : .iPadAir,
+           "iPad4,3"   : .iPadAir,
+           "iPad5,3"   : .iPadAir2,
+           "iPad5,4"   : .iPadAir2,
+           "iPad11,3"  : .iPadAir3,
+           "iPad11,4"  : .iPadAir3,
+           "iPad13,1"  : .iPadAir4,
+           "iPad13,2"  : .iPadAir4,
+           "iPad13,16" : .iPadAir5,
+           "iPad13,17" : .iPadAir5,
+   
+           //iPhone
+           "iPhone3,1" : .iPhone4,
+           "iPhone3,2" : .iPhone4,
+           "iPhone3,3" : .iPhone4,
+           "iPhone4,1" : .iPhone4S,
+           "iPhone5,1" : .iPhone5,
+           "iPhone5,2" : .iPhone5,
+           "iPhone5,3" : .iPhone5C,
+           "iPhone5,4" : .iPhone5C,
+           "iPhone6,1" : .iPhone5S,
+           "iPhone6,2" : .iPhone5S,
+           "iPhone7,1" : .iPhone6Plus,
+           "iPhone7,2" : .iPhone6,
+           "iPhone8,1" : .iPhone6S,
+           "iPhone8,2" : .iPhone6SPlus,
+           "iPhone8,4" : .iPhoneSE,
+           "iPhone9,1" : .iPhone7,
+           "iPhone9,3" : .iPhone7,
+           "iPhone9,2" : .iPhone7Plus,
+           "iPhone9,4" : .iPhone7Plus,
+           "iPhone10,1" : .iPhone8,
+           "iPhone10,4" : .iPhone8,
+           "iPhone10,2" : .iPhone8Plus,
+           "iPhone10,5" : .iPhone8Plus,
+           "iPhone10,3" : .iPhoneX,
+           "iPhone10,6" : .iPhoneX,
+           "iPhone11,2" : .iPhoneXS,
+           "iPhone11,4" : .iPhoneXSMax,
+           "iPhone11,6" : .iPhoneXSMax,
+           "iPhone11,8" : .iPhoneXR,
+           "iPhone12,1" : .iPhone11,
+           "iPhone12,3" : .iPhone11Pro,
+           "iPhone12,5" : .iPhone11ProMax,
+           "iPhone12,8" : .iPhoneSE2,
+           "iPhone13,1" : .iPhone12Mini,
+           "iPhone13,2" : .iPhone12,
+           "iPhone13,3" : .iPhone12Pro,
+           "iPhone13,4" : .iPhone12ProMax,
+           "iPhone14,4" : .iPhone13Mini,
+           "iPhone14,5" : .iPhone13,
+           "iPhone14,2" : .iPhone13Pro,
+           "iPhone14,3" : .iPhone13ProMax,
+           "iPhone14,6" : .iPhoneSE3,
+           
+           // Apple Watch
+           "Watch1,1" : .AppleWatch1,
+           "Watch1,2" : .AppleWatch1,
+           "Watch2,6" : .AppleWatchS1,
+           "Watch2,7" : .AppleWatchS1,
+           "Watch2,3" : .AppleWatchS2,
+           "Watch2,4" : .AppleWatchS2,
+           "Watch3,1" : .AppleWatchS3,
+           "Watch3,2" : .AppleWatchS3,
+           "Watch3,3" : .AppleWatchS3,
+           "Watch3,4" : .AppleWatchS3,
+           "Watch4,1" : .AppleWatchS4,
+           "Watch4,2" : .AppleWatchS4,
+           "Watch4,3" : .AppleWatchS4,
+           "Watch4,4" : .AppleWatchS4,
+           "Watch5,1" : .AppleWatchS5,
+           "Watch5,2" : .AppleWatchS5,
+           "Watch5,3" : .AppleWatchS5,
+           "Watch5,4" : .AppleWatchS5,
+           "Watch5,9" : .AppleWatchSE,
+           "Watch5,10" : .AppleWatchSE,
+           "Watch5,11" : .AppleWatchSE,
+           "Watch5,12" : .AppleWatchSE,
+           "Watch6,1" : .AppleWatchS6,
+           "Watch6,2" : .AppleWatchS6,
+           "Watch6,3" : .AppleWatchS6,
+           "Watch6,4" : .AppleWatchS6,
+           "Watch6,6" : .AppleWatchS7,
+           "Watch6,7" : .AppleWatchS7,
+           "Watch6,8" : .AppleWatchS7,
+           "Watch6,9" : .AppleWatchS7,
+   
+           //Apple TV
+           "AppleTV1,1" : .AppleTV1,
+           "AppleTV2,1" : .AppleTV2,
+           "AppleTV3,1" : .AppleTV3,
+           "AppleTV3,2" : .AppleTV3,
+           "AppleTV5,3" : .AppleTV4,
+           "AppleTV6,2" : .AppleTV_4K,
+           "AppleTV11,1" : .AppleTV2_4K
+       ]
+   
+       guard let mcode = modelCode, let map = String(validatingUTF8: mcode), let model = modelMap[map] else { return Model.unrecognized }
+       if model == .simulator {
+           if let simModelCode = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] {
+               if let simMap = String(validatingUTF8: simModelCode), let simModel = modelMap[simMap] {
+                   return simModel
+               }
+           }
+       }
+       return model
+       }
+   }
 
 

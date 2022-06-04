@@ -213,11 +213,12 @@ PODS:
     - abseil/base/config
     - abseil/meta/type_traits
   - Alamofire (5.4.1)
-  - AppAuth (1.4.0):
-    - AppAuth/Core (= 1.4.0)
-    - AppAuth/ExternalUserAgent (= 1.4.0)
-  - AppAuth/Core (1.4.0)
-  - AppAuth/ExternalUserAgent (1.4.0)
+  - AppAuth (1.5.0):
+    - AppAuth/Core (= 1.5.0)
+    - AppAuth/ExternalUserAgent (= 1.5.0)
+  - AppAuth/Core (1.5.0)
+  - AppAuth/ExternalUserAgent (1.5.0):
+    - AppAuth/Core
   - BoringSSL-GRPC (0.0.7):
     - BoringSSL-GRPC/Implementation (= 0.0.7)
     - BoringSSL-GRPC/Interface (= 0.0.7)
@@ -229,6 +230,7 @@ PODS:
     - BSGridCollectionViewLayout (= 1.2.5)
     - BSImageView (= 1.0.3)
   - BSImageView (1.0.3)
+  - CardSlider (0.1.0)
   - CircleMenu (4.1.0)
   - Cosmos (23.0.0)
   - CTSlidingUpPanel (1.2.0)
@@ -432,22 +434,19 @@ PODS:
     - BoringSSL-GRPC (= 0.0.7)
     - gRPC-Core/Interface (= 1.28.2)
   - gRPC-Core/Interface (1.28.2)
-  - GTMAppAuth (1.1.0):
+  - GTMAppAuth (1.2.3):
     - AppAuth/Core (~> 1.4)
-    - GTMSessionFetcher (~> 1.4)
-  - GTMSessionFetcher (1.5.0):
-    - GTMSessionFetcher/Full (= 1.5.0)
+    - GTMSessionFetcher/Core (~> 1.5)
   - GTMSessionFetcher/Core (1.5.0)
-  - GTMSessionFetcher/Full (1.5.0):
-    - GTMSessionFetcher/Core (= 1.5.0)
   - Haneke (1.0.2)
+  - iCarousel (1.8.3)
   - InstagramLogin (1.3.0)
   - JGProgressHUD (2.2)
-  - Kingfisher (6.0.1)
+  - Kingfisher (7.2.0)
   - LBTAComponents (1.1)
   - LBTATools (1.0.12)
   - leveldb-library (1.22)
-  - lottie-ios (3.1.9)
+  - lottie-ios (3.3.0)
   - nanopb (1.30906.0):
     - nanopb/decode (= 1.30906.0)
     - nanopb/encode (= 1.30906.0)
@@ -472,6 +471,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire
   - BSImagePicker (~> 2.4)
+  - CardSlider
   - CircleMenu
   - Cosmos
   - CTSlidingUpPanel
@@ -490,6 +490,7 @@ DEPENDENCIES:
   - Fusuma
   - GeoFire (from `https://github.com/firebase/geofire-objc.git`)
   - Haneke
+  - iCarousel
   - InstagramLogin
   - JGProgressHUD
   - Kingfisher
@@ -515,6 +516,7 @@ SPEC REPOS:
     - BSGridCollectionViewLayout
     - BSImagePicker
     - BSImageView
+    - CardSlider
     - CircleMenu
     - Cosmos
     - CTSlidingUpPanel
@@ -547,6 +549,7 @@ SPEC REPOS:
     - GTMAppAuth
     - GTMSessionFetcher
     - Haneke
+    - iCarousel
     - InstagramLogin
     - JGProgressHUD
     - Kingfisher
@@ -588,11 +591,12 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
-  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
+  AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   BSGridCollectionViewLayout: 333dcb457a5a3bdd9212607ab5756553dcfe06cb
   BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
   BSImageView: a149459433a2687157d034c78e059d30ac7f2544
+  CardSlider: 0a8f5f17f5a76701771794b07fdaeddc512358c8
   CircleMenu: a66095199a5e26f19acbb212f077010257767fe5
   Cosmos: b5c6a9a637e28a061b54c8f8b1d8529d7d4db73f
   CTSlidingUpPanel: 339b11e3f6f2173f9cc21108fb127a6a849171d5
@@ -623,16 +627,17 @@ SPEC CHECKSUMS:
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   "gRPC-C++": 13d8ccef97d5c3c441b7e3c529ef28ebee86fad2
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
-  GTMAppAuth: 197a8dabfea5d665224aa00d17f164fc2248dab9
+  GTMAppAuth: 987526d41b07efb1bedda5e936fe0cb718a03113
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   Haneke: 01454a67322faa0dd9d81fc0f447885044e71521
+  iCarousel: d782f635afac190c49bb8ee455882284cff8b85f
   InstagramLogin: 55a3ab7aa6ee3f75bf06fdec1bb8f1e01e2c0b00
   JGProgressHUD: d83d7a981b85d11205e19ff8ad5bb9c40571c847
-  Kingfisher: adde87a4f74f6a3845395769354efff593581740
+  Kingfisher: 3ac0b75b155cabc0e544877d1a4deea29feece92
   LBTAComponents: 2e7719683ddcf1cdf7280700438c0c6a5f7da550
   LBTATools: 389a901a01b9a56bea5682c40cd6e23530f40015
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
-  lottie-ios: 3a3758ef5a008e762faec9c9d50a39842f26d124
+  lottie-ios: 6ac74dcc09904798f59b18cb3075c089d76be9ae
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   NVActivityIndicatorView: 1f6c5687f1171810aa27a3296814dc2d7dec3667
   OpalImagePicker: 38e772dd93a54431fc516b33e1f337c50f745834
@@ -646,6 +651,6 @@ SPEC CHECKSUMS:
   UICircularProgressRing: 738b48db0ec1fbbd8482d727979392bb8c272e8d
   ViewAnimator: 7512352ec4dec2901b980d16b1256d601c30a44c
 
-PODFILE CHECKSUM: e2ed648f84a9b08e4be27f5c47a905718cba4694
+PODFILE CHECKSUM: 2028b3ce08594d6545eebe6992a3ba1139f17363
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.11.3

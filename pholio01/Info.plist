@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>co.chrisransom.phollio01</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -51,15 +55,17 @@
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string></string>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs to access your camera for photo gallery purposes!</string>
+	<string>$(PRODUCT_NAME) needs to access your camera for profile picture!</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Need &quot;Face ID&quot; for login </string>
+	<string>Need "Face ID" for login </string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs Location access for gps services for matching purposes!</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to access your camera</string>
+	<string>$(PRODUCT_NAME) needs to access your camera for photo uploads!</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library.</string>
+	<string>$(PRODUCT_NAME) needs to access your camera for photo uploads!</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to deliver personalized ads to you.</string>
 	<key>Privacy - Location Usage Description</key>
 	<string>$(PRODUCT_NAME) needs Location access for gps services for matching purposes!</string>
 	<key>Privacy - Location When In Use Usage Description</key>

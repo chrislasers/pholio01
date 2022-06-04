@@ -26,7 +26,6 @@ platform :ios, '13.6'
 
 	pod 'SwiftValidator', :git => 'https://github.com/jpotts18/SwiftValidator.git', :tag => '4.2.0'
 
-
 	pod 'FacebookShare'
 
 	pod 'FacebookCore'
@@ -83,9 +82,13 @@ platform :ios, '13.6'
   
 	pod 'OpalImagePicker'
 
-	pod 'lottie-ios'
-
 	pod 'NVActivityIndicatorView'
+  
+  pod 'CardSlider'
+  
+  pod 'iCarousel'
+  
+  pod 'lottie-ios'
 
 end
 

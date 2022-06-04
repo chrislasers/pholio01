@@ -143,42 +143,6 @@ extension RequestViewController: UITableViewDataSource {
             
         })
         
-        cell!.setfunction {
-            
-            let id = UserModel.system.requestList[indexPath.row].userId
-            UserModel.system.acceptFriendRequest(id!)
-            
-             print("Interested")
-            
-            
-            let matchedUser = UserModel.system.requestList[indexPath.row]
-            
-            Helper.Pholio.matchedUser = matchedUser
-            
-            guard let currentUserId = Auth.auth().currentUser?.uid else { return }
-            
-            DBService.shared.refreshUser(userId: matchedUser.userId!) { (updatedUser) in
-                
-                let matched = updatedUser.matchedUsers[currentUserId] as? Bool
-                
-                if matched == true {
-                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
-                    
-                    ref.child("followers").child(matchedUser.userId!).child(currentUserId)
-
-                } else if matched == false {
-                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
-                    DBService.shared.users.child(matchedUser.userId!).child("Matched-Users").child(currentUserId).setValue(true)
-                    
-                } else {
-                    // Not matched yet
-                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(false)
-            
-            
-            
-        }
-            }
-        }
       
 
         
@@ -192,32 +156,71 @@ extension RequestViewController: UITableViewDataSource {
             
             
             let matchedUser = UserModel.system.requestList[indexPath.row]
-            
+
             Helper.Pholio.matchedUser = matchedUser
-            
+
             guard let currentUserId = Auth.auth().currentUser?.uid else { return }
-            
+
             DBService.shared.refreshUser(userId: matchedUser.userId!) { (updatedUser) in
-                
+
                 let matched = updatedUser.matchedUsers[currentUserId] as? Bool
-                
+
                 if matched == true {
                     DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
-                    
+
                     ref.child("followers").child(matchedUser.userId!).child(currentUserId)
 
                 } else if matched == false {
                     DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
                     DBService.shared.users.child(matchedUser.userId!).child("Matched-Users").child(currentUserId).setValue(true)
-                    
+
                 } else {
                     // Not matched yet
                     DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(false)
-            
-            
-            
+
+
+
         }
             }
+        }
+        
+        
+        cell!.setfunction {
+            
+//            let id = UserModel.system.requestList[indexPath.row].userId
+//            UserModel.system.acceptFriendRequest(id!)
+            
+             print("View Profile")
+            
+            
+//            let matchedUser = UserModel.system.requestList[indexPath.row]
+//
+//            Helper.Pholio.matchedUser = matchedUser
+//
+//            guard let currentUserId = Auth.auth().currentUser?.uid else { return }
+//
+//            DBService.shared.refreshUser(userId: matchedUser.userId!) { (updatedUser) in
+//
+//                let matched = updatedUser.matchedUsers[currentUserId] as? Bool
+//
+//                if matched == true {
+//                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
+//
+//                    ref.child("followers").child(matchedUser.userId!).child(currentUserId)
+//
+//                } else if matched == false {
+//                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(true)
+//                    DBService.shared.users.child(matchedUser.userId!).child("Matched-Users").child(currentUserId).setValue(true)
+//
+//                } else {
+//                    // Not matched yet
+//                    DBService.shared.currentUser.child("Matched-Users").child(matchedUser.userId!).setValue(false)
+//
+//
+//
+//        }
+//            }
+            
         }
         
         // Return cell

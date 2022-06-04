@@ -12,28 +12,23 @@ import FirebaseUI
 import SDWebImage
 import Photos
 
+
+
 class UploadimageCell: UICollectionViewCell {
     
-    
-    
-    
-    
-
         
         @IBOutlet weak var imageView: UIImageView!
-        
+    
+    weak var delegate : UploadimageCell?
+    
+    
+    
         override func prepareForReuse() {
-            
-            
             super.prepareForReuse()
+            
             self.imageView.image = nil
+            
         }
-    
-    
-    
-
-    
-    
     
     
     

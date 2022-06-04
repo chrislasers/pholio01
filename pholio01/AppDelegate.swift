@@ -23,6 +23,8 @@ import FacebookCore
 import FacebookLogin
 import FirebaseInstanceID
 import FirebaseMessaging
+import AppTrackingTransparency
+import AdSupport
 
 
 enum GenderFilter: String {
@@ -65,6 +67,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var locationManager: CLLocationManager?
     
+  
+
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         
@@ -93,7 +98,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
         }
         
-
+      
         
         // [START set_messaging_delegate]
         Messaging.messaging().delegate = self
@@ -176,6 +181,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
     }
+    
+    
     
     
     //func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -275,6 +282,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
+        let appstate = UIApplication.shared.applicationState
+                switch appstate {
+                case .active:
+                    
+                    if #available(iOS 14, *) {
+                       ATTrackingManager.requestTrackingAuthorization { _ in
+                       }
+                    } else {
+                       // Fallback on earlier versions
+                    }
+                    
+                    print("the app is in active state")
+                case .background:
+                    print("the app is in background state")
+                case .inactive:
+                    print("the app is in inactive state")
+                default:
+                    print("the default state")
+                    break
+                }
         connectToFcm()
     }
     
@@ -363,6 +390,16 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        
+        //Chapter5.10-AddOn
+        let id = notification.request.identifier
+        print("Received in-app notification with ID = \(id)")
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        completionHandler([.alert, .sound])
+
+        
+        
+        
         let userInfo = notification.request.content.userInfo
         
         // With swizzling disabled you must let Messaging know about the message, for Analytics
@@ -402,6 +439,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
+        
         let userInfo = response.notification.request.content.userInfo
         // Print message ID.
         if let messageID = userInfo[gcmMessageIDKey] {

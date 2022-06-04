@@ -171,6 +171,7 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
         }, withCancel: nil)
     }
     
+    
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer){
         if gestureRecognizer.state == .ended {
             
@@ -234,8 +235,117 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
                         
                     }
                     
+                    let blockAction = UIAlertAction(title: "Block User", style: .destructive) { (action) in
+                        
+                        //Code that sends reported users to Firebase Database
+                        
+                        let currentUserId = Auth.auth().currentUser!.uid
+                        
+                        var blockUserId: String
+                        
+                        let message = self.messages[indexPath.row]
+                        
+                        if currentUserId == message.fromId {
+                            blockUserId = message.toId ?? ""
+                        } else {
+                            blockUserId = message.fromId ?? ""
+                        }
+                        
+                        let messageRef = Database.database().reference().child("user-messages")
+                        messageRef.child(currentUserId).child(blockUserId).removeValue()
+                        messageRef.child(blockUserId).child(currentUserId).removeValue()
+                        
+                        let userRef = Database.database().reference().child("Users")
+                        userRef.child(currentUserId).child("Matched-Users").child(blockUserId).setValue(false)
+                        userRef.child(blockUserId).child("Matched-Users").child(currentUserId).setValue(false)
+                        
+                        Helper.Pholio.currentUser.matchedUsers[blockUserId] = false
+                        
+                        self.currentUser = Helper.Pholio.currentUser
+                        
+                        self.getMatchedUsers()
+                        
+                        for (index, mes) in self.messages.enumerated() {
+                            if mes.fromId == currentUserId && mes.toId == blockUserId || mes.fromId == blockUserId && mes.toId == currentUserId {
+                                
+                                self.messages.remove(at: index)
+                            }
+                        }
+                        
+                        self.attemptReloadofTable()
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                            let successAlert = UIAlertController(title: "Blocked", message: "Incident has been reported and further investigation will occur shortly", preferredStyle: .alert)
+                            let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+                            successAlert.addAction(okAction)
+                            self.present(successAlert, animated: true, completion: nil)
+                            
+                            self.newMatch.reloadData()
+                            self.matchTable.reloadData()
+                            
+                            Database.database().reference().child("reported-users").childByAutoId().child("userId").setValue(blockUserId)
+                        })
+                        
+                    }
+                    
+                    
+                    let reportAction = UIAlertAction(title: "Report & Block User", style: .destructive) { (action) in
+                        
+                        //Code that sends reported users to Firebase Database
+                        
+                        let currentUserId = Auth.auth().currentUser!.uid
+                        
+                        var blockUserId: String
+                        
+                        let message = self.messages[indexPath.row]
+                        
+                        if currentUserId == message.fromId {
+                            blockUserId = message.toId ?? ""
+                        } else {
+                            blockUserId = message.fromId ?? ""
+                        }
+                        
+                        let messageRef = Database.database().reference().child("user-messages")
+                        messageRef.child(currentUserId).child(blockUserId).removeValue()
+                        messageRef.child(blockUserId).child(currentUserId).removeValue()
+                        
+                        let userRef = Database.database().reference().child("Users")
+                        userRef.child(currentUserId).child("Matched-Users").child(blockUserId).setValue(false)
+                        userRef.child(blockUserId).child("Matched-Users").child(currentUserId).setValue(false)
+                        
+                        Helper.Pholio.currentUser.matchedUsers[blockUserId] = false
+                        
+                        self.currentUser = Helper.Pholio.currentUser
+                        
+                        self.getMatchedUsers()
+                        
+                        for (index, mes) in self.messages.enumerated() {
+                            if mes.fromId == currentUserId && mes.toId == blockUserId || mes.fromId == blockUserId && mes.toId == currentUserId {
+                                
+                                self.messages.remove(at: index)
+                            }
+                        }
+                        
+                        self.attemptReloadofTable()
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                            let successAlert = UIAlertController(title: "Reported & Blocked", message: "Incident has been reported and further investigation will occur shortly", preferredStyle: .alert)
+                            let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+                            successAlert.addAction(okAction)
+                            self.present(successAlert, animated: true, completion: nil)
+                            
+                            self.newMatch.reloadData()
+                            self.matchTable.reloadData()
+                            
+                            Database.database().reference().child("reported-users").childByAutoId().child("userId").setValue(blockUserId)
+                        })
+                        
+                    }
+                    
                     let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-                    Service.showAlert(on: self, style: .actionSheet, title: nil, message: nil, actions: [signOutAction, cancelAction], completion: nil)
+                    
+                    Service.showAlert(on: self, style: .actionSheet, title: nil, message: nil, actions: [signOutAction,blockAction,reportAction,cancelAction], completion: nil)
+                 
                 }
             }
         }
@@ -309,22 +419,89 @@ class NewMatchVC: UIViewController,UICollectionViewDelegate, UICollectionViewDat
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        switch UIDevice().type {
+            
+        case .iPad9:
+            
+            
+            let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
+            labeltwo.center = CGPoint(x: 115, y: 230)
+            labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
+            labeltwo.text = "Messages"
+            labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+            self.view.addSubview(labeltwo)
+            
+        case .iPadAir5:
+            
+            let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
+            labeltwo.center = CGPoint(x: 115, y: 230)
+            labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
+            labeltwo.text = "Messages"
+            labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+            self.view.addSubview(labeltwo)
+            
+        case .iPadPro9_7:
+            
+            let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
+            labeltwo.center = CGPoint(x: 115, y: 230)
+            labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
+            labeltwo.text = "Messages"
+            labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+            self.view.addSubview(labeltwo)
+            
+        case .iPadPro3_11:
+            
+            let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
+            labeltwo.center = CGPoint(x: 115, y: 230)
+            labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
+            labeltwo.text = "Messages"
+            labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+            self.view.addSubview(labeltwo)
+            
+        case .iPadPro5_12_9:
+            
+            
+            let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
+            labeltwo.center = CGPoint(x: 115, y: 230)
+            labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
+            labeltwo.text = "Messages"
+            labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+            self.view.addSubview(labeltwo)
+            
+        case .iPadMini6:
+
+            
+            
+            let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
+            labeltwo.center = CGPoint(x: 115, y: 230)
+            labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
+            labeltwo.text = "Messages"
+            labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+            self.view.addSubview(labeltwo)
+       
+
+        default:
+            
+            
+            let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
+            labeltwo.center = CGPoint(x: 115, y: 277)
+            labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
+            labeltwo.text = "Messages"
+            labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+            self.view.addSubview(labeltwo)
+        }
+        
         // addGesture()
         
-        let label = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 21))
-        label.center = CGPoint(x: 115, y: 80)
-        label.font = UIFont.boldSystemFont(ofSize: 18)
+        let label = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 23))
+        label.center = CGPoint(x: 115, y: 105)
+        label.font = UIFont.boldSystemFont(ofSize: 22)
         label.text = "New Matches"
-        label.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
-        self.view.addSubview(label)
+        label.textColor = #colorLiteral(red: 0.03921568627, green: 0.5176470588, blue: 1, alpha: 1)
+        //self.view.addSubview(label)
         
-        
-        let labeltwo = UILabel(frame: CGRect(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2, width: 200, height: 25))
-        labeltwo.center = CGPoint(x: 115, y: 277)
-        labeltwo.font = UIFont.boldSystemFont(ofSize: 22)
-        labeltwo.text = "Messages"
-        labeltwo.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
-        self.view.addSubview(labeltwo)
+    
 
         setupLongPressGesture()
         

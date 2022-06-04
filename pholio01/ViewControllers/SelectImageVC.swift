@@ -22,6 +22,11 @@ import JGProgressHUD
 import Pastel
 
 
+protocol UploadimageCellDelgate: AnyObject {
+    
+    func delete(cell: UploadimageCell )
+    
+}
 
 
 
@@ -35,7 +40,6 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
     
     @IBOutlet weak var collectionView: UICollectionView!
         
-    @IBOutlet var pageControl: UIPageControl!
     
     @IBOutlet weak var pickImageBTN: UIButton!
     
@@ -47,6 +51,16 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
     private var uploadImagePresenter: UploadImagePresenter!
     
     
+    struct Storyboard {
+      
+        static let showDetailVC = "ShowImageDetail"
+  
+    }
+    
+    var images: [Any] = []
+
+    
+    var selectedImage: UIImage!
     
    
    
@@ -60,7 +74,6 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
     
     func uploadImagesPresenterDidScrollTo(index: Int) {
         func uploadImagesPresenterDidScrollTo(index: Int) {
-            pageControl.currentPage = index
         }
     }
     
@@ -117,9 +130,9 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
        
         
         pickImageBTN.backgroundColor = UIColor.orange
-        pickImageBTN.setTitle("Press Here To Select Image", for: .normal)
+        pickImageBTN.setTitle("UPLOAD PHOTOS", for: .normal)
         pickImageBTN.layer.borderColor = UIColor.white.withAlphaComponent(0.12).cgColor
-        pickImageBTN.layer.borderWidth = 1.5
+        pickImageBTN.layer.borderWidth = 1
        // pickImageBTN.layer.cornerRadius = 4
         pickImageBTN.setTitleColor(UIColor.white, for: .normal)
         //signUp.layer.shadowColor = UIColor.white.cgColor
@@ -229,13 +242,13 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
     @IBAction func savePressed(_ sender: Any) {
         
         
-        guard uploadImagePresenter.images.count > 1, let images = uploadImagePresenter.images as? [UIImage] else
+        guard uploadImagePresenter.images.count > 3, let images = uploadImagePresenter.images as? [UIImage] else
             
         {
             print("No Image Selected")
             
             
-             let emailNotSentAlert = UIAlertController(title: "More Photos Needed", message: "Please select at least one more photo to continue", preferredStyle: .alert)
+             let emailNotSentAlert = UIAlertController(title: "More Photos Needed", message: "Please select atleast 4 photos for your portfolio", preferredStyle: .alert)
               emailNotSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                self.present(emailNotSentAlert, animated: true, completion: nil)
             
@@ -253,6 +266,7 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
        
     }
     
+   
     
     
 
@@ -270,6 +284,12 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
         alertViewController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alertViewController, animated: true, completion: nil)
     }
+    
+    
+    
+    
+    
+    
 
     
     func userSelectedimage(_ image: UIImage) {
@@ -277,16 +297,17 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
         uploadImagePresenter.add(image: image)
         collectionView.reloadData()
         
-        let offsetX = collectionView.frame.width * CGFloat(uploadImagePresenter.images.count-1)
         
-        collectionView.setContentOffset(CGPoint(x: offsetX, y: 0.00), animated: true)
         
-        pageControl.numberOfPages = uploadImagePresenter.images.count
-        pageControl.currentPage = uploadImagePresenter.images.count-1
+        
+//        let offsetX = collectionView.frame.width * CGFloat(uploadImagePresenter.images.count-1)
+//        
+//        collectionView.setContentOffset(CGPoint(x: offsetX, y: 0.00), animated: true)
+       
     }
     
-    @objc func getAllImg() -> Void
-        {
+    @objc func getAllImg() -> Void {
+        
             DispatchQueue.main.async {
                 // Update UI
             
@@ -298,13 +319,13 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
                     var thumbnail = UIImage()
                         
                         option.isSynchronous = true
-                        //option.deliveryMode = .highQualityFormat
+                        option.deliveryMode = .highQualityFormat
                         option.resizeMode = .fast
                     
                         
 
 
-                        PHCachingImageManager.default().requestImage(for: self.SelectedAssets[i], targetSize:CGSize(width: 700, height: 700), contentMode: .aspectFill, options: option, resultHandler: {(result, info)->Void in
+                        PHCachingImageManager.default().requestImage(for: self.SelectedAssets[i], targetSize:CGSize(width: 1100, height: 1100), contentMode: .aspectFit, options: option, resultHandler: {(result, info)->Void in
                             
                             // Cuts off at thumbnail...fix NOW!!
                             if result == nil {
@@ -356,7 +377,7 @@ class SelectImageVC: UIViewController, UIImagePickerControllerDelegate, UINaviga
         // create an instance
         let imagePicker = BSImagePickerViewController()
         
-        imagePicker.maxNumberOfSelections = 5
+        imagePicker.maxNumberOfSelections = 9
 
 
 
@@ -427,7 +448,6 @@ picker.dismiss(animated: true, completion: nil)    }
 }
     
 }
-
 
 
 

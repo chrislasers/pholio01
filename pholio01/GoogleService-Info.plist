@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>348397636635-dofdjkajtnfn15c5s3fe7sm1s3fhff9a.apps.googleusercontent.com</string>
+	<string>637834816107-0js9hhcaip5keds1pl81h7pjd9v43n0e.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.348397636635-dofdjkajtnfn15c5s3fe7sm1s3fhff9a</string>
+	<string>com.googleusercontent.apps.637834816107-0js9hhcaip5keds1pl81h7pjd9v43n0e</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCbiuCFzqorVP2SQDhAZ1XVMwd931xnSfI</string>
+	<string>AIzaSyBFTy5x0n2IuKjqEzQhsLNqhTBMZS7nnlE</string>
 	<key>GCM_SENDER_ID</key>
-	<string>348397636635</string>
+	<string>637834816107</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>co.chrisransom9595.pholio01</string>
+	<string>co.chrisransom.phollio01</string>
 	<key>PROJECT_ID</key>
-	<string>testpholio</string>
+	<string>pholio-7ffc3</string>
 	<key>STORAGE_BUCKET</key>
-	<string>testpholio.appspot.com</string>
+	<string>pholio-7ffc3.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:348397636635:ios:fd731babdd8279d3</string>
+	<string>1:637834816107:ios:86ee4de599ef7ad6</string>
 	<key>DATABASE_URL</key>
-	<string>https://testpholio.firebaseio.com</string>
+	<string>https://pholio-7ffc3.firebaseio.com</string>
 </dict>
 </plist>
